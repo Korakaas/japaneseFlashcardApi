@@ -3,6 +3,8 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
+use DateTime;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -23,6 +25,8 @@ class AppFixtures extends Fixture
         $user->setEmail("user@jpflashcardapi.com");
         $user->setRoles(["ROLE_USER"]);
         $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+        $user->setPseudo('User');
+        $user->setRegisteredAt(new DateTimeImmutable('2023-08-15'));
         $manager->persist($user);
         
         // Création d'un user admin
@@ -30,6 +34,8 @@ class AppFixtures extends Fixture
         $userAdmin->setEmail("admin@jpflashcardapi.com");
         $userAdmin->setRoles(["ROLE_ADMIN"]);
         $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
+        $userAdmin->setPseudo('Admin');
+        $userAdmin->setRegisteredAt(new DateTimeImmutable('2023-08-15'));
         $manager->persist($userAdmin);
 
         // // Création des auteurs.

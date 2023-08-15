@@ -3,6 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +29,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\Column(length: 40)]
+    private ?string $pseudo = null;
+
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+    private ?\DateTimeImmutable $registeredAt = null;
+
+    #[ORM\ManyToMany(targetEntity: Deck::class, mappedBy: 'User')]
+    private Collection $decks;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: DailyStats::class, orphanRemoval: true)]
+    private Collection $dailyStats;
+
+    public function __construct()
+    {
+        $this->decks = new ArrayCollection();
+        $this->dailyStats = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -104,5 +125,86 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string {
         return $this->getUserIdentifier();
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
+
+        return $this;
+    }
+
+    public function getRegisteredAt(): ?\DateTimeImmutable
+    {
+        return $this->registeredAt;
+    }
+
+    public function setRegisteredAt(\DateTimeImmutable $registeredAt): static
+    {
+        $this->registeredAt = $registeredAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Deck>
+     */
+    public function getDecks(): Collection
+    {
+        return $this->decks;
+    }
+
+    public function addDeck(Deck $deck): static
+    {
+        if (!$this->decks->contains($deck)) {
+            $this->decks->add($deck);
+            $deck->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeck(Deck $deck): static
+    {
+        if ($this->decks->removeElement($deck)) {
+            $deck->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, DailyStats>
+     */
+    public function getDailyStats(): Collection
+    {
+        return $this->dailyStats;
+    }
+
+    public function addDailyStat(DailyStats $dailyStat): static
+    {
+        if (!$this->dailyStats->contains($dailyStat)) {
+            $this->dailyStats->add($dailyStat);
+            $dailyStat->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDailyStat(DailyStats $dailyStat): static
+    {
+        if ($this->dailyStats->removeElement($dailyStat)) {
+            // set the owning side to null (unless already changed)
+            if ($dailyStat->getUser() === $this) {
+                $dailyStat->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
