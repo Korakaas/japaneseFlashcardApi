@@ -6,12 +6,8 @@ use App\Repository\FlashcardGrammarRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FlashcardGrammarRepository::class)]
-class FlashcardGrammar
+class FlashcardGrammar extends Flashcard
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[ORM\Column(length: 255)]
     private ?string $grammarPoint = null;

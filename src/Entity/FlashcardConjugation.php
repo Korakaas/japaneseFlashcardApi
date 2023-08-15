@@ -6,12 +6,8 @@ use App\Repository\FlashcardConjugationRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: FlashcardConjugationRepository::class)]
-class FlashcardConjugation
+class FlashcardConjugation extends Flashcard
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
 
     #[ORM\Column(length: 30)]
     private ?string $polite = null;

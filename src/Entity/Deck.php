@@ -24,10 +24,6 @@ class Deck
     #[ORM\Column]
     private ?bool $reverse = null;
 
-    #[ORM\ManyToOne(inversedBy: 'decks')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Category $category = null;
-
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: Flashcard::class, orphanRemoval: true)]
     private Collection $flashcards;
 
@@ -81,18 +77,6 @@ class Deck
     public function setReverse(bool $reverse): static
     {
         $this->reverse = $reverse;
-
-        return $this;
-    }
-
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): static
-    {
-        $this->category = $category;
 
         return $this;
     }
