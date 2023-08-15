@@ -18,11 +18,6 @@ class FlashcardVocabulary extends Flashcard
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $audio = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getWord(): ?string
     {
         return $this->word;

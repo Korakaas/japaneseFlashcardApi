@@ -15,11 +15,6 @@ class FlashcardGrammar extends Flashcard
     #[ORM\Column(length: 255)]
     private ?string $grammarRule = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getGrammarPoint(): ?string
     {
         return $this->grammarPoint;

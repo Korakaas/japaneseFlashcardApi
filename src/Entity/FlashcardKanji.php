@@ -15,11 +15,6 @@ class FlashcardKanji extends Flashcard
     #[ORM\Column(length: 60, nullable: true)]
     private ?string $kunyomi = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getOnyomi(): ?string
     {
         return $this->onyomi;

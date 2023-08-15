@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -16,11 +17,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    // #[Groups(["getDecks"])]
     private ?int $id = null;
 
+    // #[Groups(["getDecks"])]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
+    // #[Groups(["getDecks"])]
     #[ORM\Column]
     private array $roles = [];
 
@@ -30,6 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    // #[Groups(["getDecks"])]
     #[ORM\Column(length: 40)]
     private ?string $pseudo = null;
 
@@ -39,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Deck::class, mappedBy: 'User')]
     private Collection $decks;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: DailyStats::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'User', targetEntity: DailyStats::class, orphanRemoval: true)]
     private Collection $dailyStats;
 
     public function __construct()

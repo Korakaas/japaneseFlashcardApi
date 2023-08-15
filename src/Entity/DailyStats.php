@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\DailyStatsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DailyStatsRepository::class)]
 class DailyStats
@@ -12,14 +13,18 @@ class DailyStats
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    // #[Groups(["getDecks"])]
     private ?int $id = null;
 
     #[ORM\Column]
+    // #[Groups(["getDecks"])]
     private ?\DateTimeImmutable $date = null;
 
+    // #[Groups(["getDecks"])]
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $dailyReviewNumber = null;
 
+    // #[Groups(["getDecks"])]
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $correctAnswerNumber = null;
 
@@ -29,7 +34,7 @@ class DailyStats
 
     #[ORM\ManyToOne(inversedBy: 'dailyStats')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $user = null;
+    private ?User $user = null;
 
     public function getId(): ?int
     {

@@ -6,6 +6,7 @@ use App\Repository\DeckRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DeckRepository::class)]
 class Deck
@@ -15,28 +16,34 @@ class Deck
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(length: 40)]
     private ?string $name = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column]
     private ?bool $public = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column]
     private ?bool $reverse = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: Flashcard::class, orphanRemoval: true)]
     private Collection $flashcards;
 
+    // #[Groups(["getDecks"])]
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'decks')]
-    private Collection $User;
+    private Collection $user;
 
+    // #[Groups(["getDecks"])]
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: DailyStats::class, orphanRemoval: true)]
     private Collection $dailyStats;
 
     public function __construct()
     {
         $this->flashcards = new ArrayCollection();
-        $this->User = new ArrayCollection();
+        $this->user = new ArrayCollection();
         $this->dailyStats = new ArrayCollection();
     }
 
@@ -46,7 +53,7 @@ class Deck
     }
 
     public function getName(): ?string
-    {
+    {=
         return $this->name;
     }
 
@@ -116,13 +123,13 @@ class Deck
      */
     public function getUser(): Collection
     {
-        return $this->User;
+        return $this->user;
     }
 
     public function addUser(User $user): static
     {
-        if (!$this->User->contains($user)) {
-            $this->User->add($user);
+        if (!$this->user->contains($user)) {
+            $this->user->add($user);
         }
 
         return $this;
@@ -130,7 +137,7 @@ class Deck
 
     public function removeUser(User $user): static
     {
-        $this->User->removeElement($user);
+        $this->user->removeElement($user);
 
         return $this;
     }

@@ -39,11 +39,6 @@ class FlashcardConjugation extends Flashcard
     #[ORM\Column(length: 30)]
     private ?string $taForm = null;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
     public function getPolite(): ?string
     {
         return $this->polite;

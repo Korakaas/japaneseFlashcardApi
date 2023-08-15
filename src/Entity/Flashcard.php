@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\FlashcardRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -22,26 +23,34 @@ class Flashcard
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getDecks"])]
     private ?int $id = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(length: 255)]
     private ?string $translation = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $furigana = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $example = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $reviewedAt = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(nullable: true)]
     private ?int $reviewNumber = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
     private ?string $reviewInterval = null;
 
+    #[Groups(["getDecks"])]
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $score = null;
 
