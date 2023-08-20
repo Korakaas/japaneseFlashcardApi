@@ -3,12 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\DeckRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DeckRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Deck
 {
     #[ORM\Id]
@@ -21,25 +25,42 @@ class Deck
     private ?User $user = null;
 
     #[ORM\Column(length: 40)]
+    #[Assert\NotBlank(message: "Le titre du paquet est obligatoire")]
+    #[Assert\Length(
+        min: 1,
+        max: 40,
+        minMessage: "Le titre doit faire au moins {{ limit }} caractères",
+        maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères"
+    )]
+    #[Groups(["getDetailDeck"])]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $public = null;
+    #[Groups(["getDetailDeck"])]
+    private ?bool $public = false;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $reverse = null;
+    #[Groups(["getDetailDeck"])]
+    private ?bool $reverse = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $description = null;
 
     #[ORM\Column]
+    #[Groups(["getDetailDeck"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToMany(targetEntity: Flashcard::class, mappedBy: 'decks')]
+    #[Groups(["getDetailDeck"])]
     private Collection $flashcards;
 
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: DailyStats::class, orphanRemoval: true)]
     private Collection $dailyStats;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getDetailDeck"])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -117,9 +138,10 @@ class Deck
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    #[ORM\PrePersist]
+    public function setCreatedAt(): self
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new DateTimeImmutable('now');
 
         return $this;
     }
@@ -179,5 +201,24 @@ class Deck
         }
 
         return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function setUpdatedAt(): self
+    {
+        $this->updatedAt = new DateTimeImmutable('now');
+
+        return $this;
+    }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
     }
 }

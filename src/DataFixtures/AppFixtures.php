@@ -188,14 +188,14 @@ class AppFixtures extends Fixture
             $day = mt_rand(1, 28);
 
             $review = new Review();
-        
+
             $review->setFlashcard($listFlascards[array_rand($listFlascards)]);
             $review->setUser($listUser[array_rand($listUser)]);
             $review->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $review->setReviewNumber(mt_rand(0,30));
-            $review->setScore(mt_rand(0,5));
-            $review->setIntervalReview( mt_rand(0, 364) + (mt_rand(0, PHP_INT_MAX - 1) / PHP_INT_MAX));
-            $review->setEaseFactor(mt_rand(130,250)/100);
+            $review->setReviewNumber(mt_rand(0, 30));
+            $review->setScore(mt_rand(0, 5));
+            $review->setIntervalReview(mt_rand(0, 364) + (mt_rand(0, PHP_INT_MAX - 1) / PHP_INT_MAX));
+            $review->setEaseFactor(mt_rand(130, 250) / 100);
             $manager->persist($review);
             $listReviews[] = $review;
         }
@@ -203,22 +203,22 @@ class AppFixtures extends Fixture
         // Création des modifications de Flashcard
         $listFlashcardModifications = [];
         $listchamps = [
-            'translation','furigana','example','polite',
-            'negative','conditional_ba','conditional_tara',
-            'imperative','volitional','causative','potential',
-            'teForm','taform','onyomi','kunyomi','grammarPoint',
-            'grammarRule','word','image','audio'
+            'translation', 'furigana', 'example', 'polite',
+            'negative', 'conditional_ba', 'conditional_tara',
+            'imperative', 'volitional', 'causative', 'potential',
+            'teForm', 'taform', 'onyomi', 'kunyomi', 'grammarPoint',
+            'grammarRule', 'word', 'image', 'audio'
         ];
         for ($i = 0; $i < 100; $i++) {
             $nbChamps = mt_rand(1, count($listchamps));
             shuffle($listchamps);
             $modification = [];
-            for($j = 0; $j < $nbChamps; $j++) {
+            for ($j = 0; $j < $nbChamps; $j++) {
                 $champ = $listchamps[$j];
                 $modification[$champ] = 'modifcations' . $i;
             }
             $flashcardModif = new FlashcardModification();
-        
+
             $flashcardModif->setFlashcard($listFlascards[array_rand($listFlascards)]);
             $flashcardModif->setUser($listUser[array_rand($listUser)]);
             $flashcardModif->setModifications($modification);
@@ -228,5 +228,4 @@ class AppFixtures extends Fixture
 
         $manager->flush();
     }
-   
 }

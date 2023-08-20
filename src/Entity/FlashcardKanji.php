@@ -4,15 +4,17 @@ namespace App\Entity;
 
 use App\Repository\FlashcardKanjiRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardKanjiRepository::class)]
 class FlashcardKanji extends Flashcard
 {
-
     #[ORM\Column(length: 60, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $onyomi = null;
 
     #[ORM\Column(length: 60, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $kunyomi = null;
 
     public function getOnyomi(): ?string

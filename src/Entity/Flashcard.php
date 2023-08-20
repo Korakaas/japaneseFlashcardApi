@@ -3,9 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\FlashcardRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -17,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
     'vocabulary' => FlashcardVocabulary::class,
     'conjugation' => FlashcardConjugation::class
 ])]
+#[ORM\HasLifecycleCallbacks]
 class Flashcard
 {
     #[ORM\Id]
@@ -25,19 +28,24 @@ class Flashcard
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(["getDetailDeck"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getDetailDeck"])]
     private ?string $translation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $furigana = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getDetailDeck"])]
     private ?string $example = null;
 
     #[ORM\Column(nullable: true)]
-    private ?bool $duplicate = null;
+    #[Groups(["getDetailDeck"])]
+    private ?bool $duplicate = false;
 
     #[ORM\ManyToMany(targetEntity: Deck::class, inversedBy: 'flashcards')]
     private Collection $decks;
@@ -46,7 +54,12 @@ class Flashcard
     private Collection $reviews;
 
     #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: FlashcardModification::class, orphanRemoval: true)]
+    #[Groups(["getDetailDeck"])]
     private Collection $flashcardModifications;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(["getDetailDeck"])]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -60,14 +73,15 @@ class Flashcard
         return $this->id;
     }
 
+    #[ORM\PrePersist]
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(): self
     {
-        $this->createdAt = $createdAt;
+        $this->createdAt = new DateTimeImmutable('now');
 
         return $this;
     }
@@ -200,6 +214,20 @@ class Flashcard
                 $flashcardModification->setFlashcard(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    #[ORM\PrePersist]
+    #[ORM\PreUpdate]
+    public function setUpdatedAt(): self
+    {
+        $this->updatedAt = new DateTimeImmutable('now');
 
         return $this;
     }

@@ -4,39 +4,49 @@ namespace App\Entity;
 
 use App\Repository\FlashcardConjugationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardConjugationRepository::class)]
 class FlashcardConjugation extends Flashcard
 {
-
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $polite = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $negative = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $conditionnalBa = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $conditionalTara = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $imperative = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $volitionnal = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $causative = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $potential = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $teForm = null;
 
     #[ORM\Column(length: 30)]
+    #[Groups(["getDetailDeck"])]
     private ?string $taForm = null;
 
     public function getPolite(): ?string

@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Deck;
 use App\Entity\Flashcard;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use PhpParser\Node\Expr\Cast\Array_;
 
 /**
  * @extends ServiceEntityRepository<Flashcard>
@@ -21,28 +23,29 @@ class FlashcardRepository extends ServiceEntityRepository
         parent::__construct($registry, Flashcard::class);
     }
 
-//    /**
-//     * @return Flashcard[] Returns an array of Flashcard objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Flashcard[] Returns an array of Flashcard objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('f')
+    //            ->andWhere('f.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('f.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Flashcard
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneByDeck($deckId): ?array
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f.translation', 'f.furigana', 'f.example', ' f.createdAt', 'f.updatedAt')
+            ->join('f.decks', 'd')
+            ->getQuery()
+            ->setMaxResults(1)
+            ->getOneOrNullResult()
+        ;
+    }
 }

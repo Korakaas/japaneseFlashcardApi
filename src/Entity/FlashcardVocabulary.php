@@ -4,18 +4,21 @@ namespace App\Entity;
 
 use App\Repository\FlashcardVocabularyRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardVocabularyRepository::class)]
 class FlashcardVocabulary extends Flashcard
 {
-
     #[ORM\Column(length: 10)]
+    #[Groups(["getDetailDeck"])]
     private ?string $word = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDetailDeck"])]
     private ?string $audio = null;
 
     public function getWord(): ?string

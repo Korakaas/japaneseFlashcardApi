@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\FlashcardModificationRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardModificationRepository::class)]
 class FlashcardModification
@@ -22,6 +23,7 @@ class FlashcardModification
     private ?Flashcard $flashcard = null;
 
     #[ORM\Column]
+    #[Groups(["getDetailDeck"])]
     private array $modifications = [];
 
     public function getId(): ?int
