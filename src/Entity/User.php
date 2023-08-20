@@ -41,16 +41,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeImmutable $registeredAt = null;
 
-    #[ORM\ManyToMany(targetEntity: Deck::class, mappedBy: 'User')]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Deck::class, orphanRemoval: true)]
     private Collection $decks;
 
-    #[ORM\OneToMany(mappedBy: 'User', targetEntity: DailyStats::class, orphanRemoval: true)]
-    private Collection $dailyStats;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Review::class, orphanRemoval: true)]
+    private Collection $reviews;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FlashcardModification::class, orphanRemoval: true)]
+    private Collection $flashcardModifications;
 
     public function __construct()
     {
         $this->decks = new ArrayCollection();
-        $this->dailyStats = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
+        $this->flashcardModifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,7 +172,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->decks->contains($deck)) {
             $this->decks->add($deck);
-            $deck->addUser($this);
+            $deck->setUser($this);
         }
 
         return $this;
@@ -177,36 +181,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeDeck(Deck $deck): static
     {
         if ($this->decks->removeElement($deck)) {
-            $deck->removeUser($this);
+            // set the owning side to null (unless already changed)
+            if ($deck->getUser() === $this) {
+                $deck->setUser(null);
+            }
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, DailyStats>
+     * @return Collection<int, Review>
      */
-    public function getDailyStats(): Collection
+    public function getReviews(): Collection
     {
-        return $this->dailyStats;
+        return $this->reviews;
     }
 
-    public function addDailyStat(DailyStats $dailyStat): static
+    public function addReview(Review $review): static
     {
-        if (!$this->dailyStats->contains($dailyStat)) {
-            $this->dailyStats->add($dailyStat);
-            $dailyStat->setUser($this);
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeDailyStat(DailyStats $dailyStat): static
+    public function removeReview(Review $review): static
     {
-        if ($this->dailyStats->removeElement($dailyStat)) {
+        if ($this->reviews->removeElement($review)) {
             // set the owning side to null (unless already changed)
-            if ($dailyStat->getUser() === $this) {
-                $dailyStat->setUser(null);
+            if ($review->getUser() === $this) {
+                $review->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FlashcardModification>
+     */
+    public function getFlashcardModifications(): Collection
+    {
+        return $this->flashcardModifications;
+    }
+
+    public function addFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if (!$this->flashcardModifications->contains($flashcardModification)) {
+            $this->flashcardModifications->add($flashcardModification);
+            $flashcardModification->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if ($this->flashcardModifications->removeElement($flashcardModification)) {
+            // set the owning side to null (unless already changed)
+            if ($flashcardModification->getUser() === $this) {
+                $flashcardModification->setUser(null);
             }
         }
 

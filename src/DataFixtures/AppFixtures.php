@@ -4,13 +4,13 @@ namespace App\DataFixtures;
 
 use App\Entity\DailyStats;
 use App\Entity\Deck;
-use App\Entity\Flashcard;
+use App\Entity\FlashcardModification;
 use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
 use App\Entity\FlashcardVocabulary;
+use App\Entity\Review;
 use App\Entity\User;
-use DateTime;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -57,12 +57,16 @@ class AppFixtures extends Fixture
         // Création des decks
         $listDeck = [];
         for ($i = 0; $i < 20; $i++) {
+            $year = mt_rand(2000, 2023);
+            $month = mt_rand(1, 12);
+            $day = mt_rand(1, 28);
             $deck = new Deck();
             $deck->setName("Deck " . $i);
-            $deck->setPublic(rand(0, 1));
-            $deck->setReverse(rand(0, 1));
-            $deck->addUser($listUser[array_rand($listUser)]);
-            $deck->addUser($listUser[array_rand($listUser)]);
+            $deck->setPublic(mt_rand(0, 1));
+            $deck->setReverse(mt_rand(0, 1));
+            $deck->setUser($listUser[array_rand($listUser)]);
+            $deck->setDescription("Description" . $i);
+            $deck->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
             $manager->persist($deck);
             $listDeck[] = $deck;
         }
@@ -70,20 +74,18 @@ class AppFixtures extends Fixture
         // Création des flashcardKanji
         $listflashcardKanji = [];
         for ($i = 0; $i < 50; $i++) {
-            $year = mt_rand(2000, 2023);
-            $month = mt_rand(1, 12);
-            $day = mt_rand(1, 28);
             $flashcardKanji = new FlashcardKanji();
+
+            $flashcardKanji->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
             $flashcardKanji->setTranslation("Translation " . $i);
             $flashcardKanji->setFurigana("Furigana " . $i);
             $flashcardKanji->setExample("Example " . $i);
             $flashcardKanji->setKunyomi("Kunyomi " . $i);
             $flashcardKanji->setOnyomi("Onyomi " . $i);
-            $flashcardKanji->setDeck($listDeck[array_rand($listDeck)]);
-            $flashcardKanji->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $flashcardKanji->setReviewNumber(rand(0,30));
-            $flashcardKanji->setScore(rand(0,5));
-            $flashcardKanji->setReviewInterval(rand(0,365));
+            $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardKanji->setDuplicate(1);
+
             $manager->persist($flashcardKanji);
             $listflashcardKanji[] = $flashcardKanji;
         }
@@ -91,20 +93,17 @@ class AppFixtures extends Fixture
         // Création des flashcardGrammar
         $listflashcardGrammar = [];
         for ($i = 0; $i < 50; $i++) {
-            $year = mt_rand(2000, 2023);
-            $month = mt_rand(1, 12);
-            $day = mt_rand(1, 28);
             $flashcardGrammar = new FlashcardGrammar();
+
+            $flashcardGrammar->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
             $flashcardGrammar->setTranslation("Translation " . $i);
             $flashcardGrammar->setFurigana("Furigana " . $i);
             $flashcardGrammar->setExample("Example " . $i);
             $flashcardGrammar->setGrammarPoint("GrammarPoin " . $i);
             $flashcardGrammar->setGrammarRule("GrammarRule " . $i);
-            $flashcardGrammar->setDeck($listDeck[array_rand($listDeck)]);
-            $flashcardGrammar->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $flashcardGrammar->setReviewNumber(rand(0,30));
-            $flashcardGrammar->setScore(rand(0,5));
-            $flashcardGrammar->setReviewInterval(rand(0,365));
+            $flashcardGrammar->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardGrammar->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardGrammar->setDuplicate(1);
             $manager->persist($flashcardGrammar);
             $listflashcardGrammar[] = $flashcardGrammar;
         }
@@ -112,32 +111,29 @@ class AppFixtures extends Fixture
         // Création des flashcardVocabulary
         $listflashcardVocabulary = [];
         for ($i = 0; $i < 50; $i++) {
-            $year = mt_rand(2000, 2023);
-            $month = mt_rand(1, 12);
-            $day = mt_rand(1, 28);
             $flashcardVocabulary = new FlashcardVocabulary();
+
+            $flashcardVocabulary->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
             $flashcardVocabulary->setTranslation("Translation " . $i);
             $flashcardVocabulary->setFurigana("Furigana " . $i);
             $flashcardVocabulary->setExample("Example " . $i);
             $flashcardVocabulary->setWord("Word " . $i);
             $flashcardVocabulary->setImage("Image " . $i);
             $flashcardVocabulary->setAudio("Audio " . $i);
-            $flashcardVocabulary->setDeck($listDeck[array_rand($listDeck)]);
-            $flashcardVocabulary->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $flashcardVocabulary->setReviewNumber(rand(0,30));
-            $flashcardVocabulary->setScore(rand(0,5));
-            $flashcardVocabulary->setReviewInterval(rand(0,365));
+            $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardVocabulary->setDuplicate(1);
+
             $manager->persist($flashcardVocabulary);
             $listflashcardVocabulary[] = $flashcardVocabulary;
         }
 
-        // Création des flashcardConjugatio
+        // Création des flashcardConjugation
         $listflashcardConjugation = [];
         for ($i = 0; $i < 50; $i++) {
-            $year = mt_rand(2000, 2023);
-            $month = mt_rand(1, 12);
-            $day = mt_rand(1, 28);
             $flashcardConjugation = new FlashcardConjugation();
+
+            $flashcardConjugation->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
             $flashcardConjugation->setTranslation("Translation " . $i);
             $flashcardConjugation->setFurigana("Furigana " . $i);
             $flashcardConjugation->setExample("Example " . $i);
@@ -151,11 +147,11 @@ class AppFixtures extends Fixture
             $flashcardConjugation->setPotential("Potential " . $i);
             $flashcardConjugation->setTeForm("TeForm " . $i);
             $flashcardConjugation->setTaForm("TaForm " . $i);
-            $flashcardConjugation->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $flashcardConjugation->setDeck($listDeck[array_rand($listDeck)]);
-            $flashcardConjugation->setReviewNumber(rand(0,30));
-            $flashcardConjugation->setScore(rand(0,5));
-            $flashcardConjugation->setReviewInterval(rand(0,365));
+            $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
+            $flashcardConjugation->setDuplicate(1);
+
+
             $manager->persist($flashcardConjugation);
             $listflashcardConjugation[] = $flashcardConjugation;
         }
@@ -169,14 +165,68 @@ class AppFixtures extends Fixture
             $nbReview = rand(1, 100);
             $dailyStats = new DailyStats();
             $dailyStats->setDate(new DateTimeImmutable("$year-$month-$day"));
-            $dailyStats->setDailyReviewNumber($nbReview);
-            $dailyStats->setCorrectAnswerNumber(rand(0, $nbReview));
+            $dailyStats->setFlashcardsReviewed($nbReview);
+            $dailyStats->setCorrectAnswers(mt_rand(0, $nbReview));
             $dailyStats->setDeck($listDeck[array_rand($listDeck)]);
-            $dailyStats->setUser($listUser[array_rand($listUser)]);
             $manager->persist($dailyStats);
             $listdailyStats[] = $dailyStats;
         }
 
+        //liste de toutes les flashcards
+        $listFlascards = array_merge(
+            $listflashcardConjugation,
+            $listflashcardGrammar,
+            $listflashcardVocabulary,
+            $listflashcardKanji
+        );
+
+        // Création des reviews
+        $listReviews = [];
+        for ($i = 0; $i < 100; $i++) {
+            $year = mt_rand(2000, 2023);
+            $month = mt_rand(1, 12);
+            $day = mt_rand(1, 28);
+
+            $review = new Review();
+        
+            $review->setFlashcard($listFlascards[array_rand($listFlascards)]);
+            $review->setUser($listUser[array_rand($listUser)]);
+            $review->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
+            $review->setReviewNumber(mt_rand(0,30));
+            $review->setScore(mt_rand(0,5));
+            $review->setIntervalReview( mt_rand(0, 364) + (mt_rand(0, PHP_INT_MAX - 1) / PHP_INT_MAX));
+            $review->setEaseFactor(mt_rand(130,250)/100);
+            $manager->persist($review);
+            $listReviews[] = $review;
+        }
+
+        // Création des modifications de Flashcard
+        $listFlashcardModifications = [];
+        $listchamps = [
+            'translation','furigana','example','polite',
+            'negative','conditional_ba','conditional_tara',
+            'imperative','volitional','causative','potential',
+            'teForm','taform','onyomi','kunyomi','grammarPoint',
+            'grammarRule','word','image','audio'
+        ];
+        for ($i = 0; $i < 100; $i++) {
+            $nbChamps = mt_rand(1, count($listchamps));
+            shuffle($listchamps);
+            $modification = [];
+            for($j = 0; $j < $nbChamps; $j++) {
+                $champ = $listchamps[$j];
+                $modification[$champ] = 'modifcations' . $i;
+            }
+            $flashcardModif = new FlashcardModification();
+        
+            $flashcardModif->setFlashcard($listFlascards[array_rand($listFlascards)]);
+            $flashcardModif->setUser($listUser[array_rand($listUser)]);
+            $flashcardModif->setModifications($modification);
+            $manager->persist($flashcardModif);
+            $listFlashcardModifications[] = $flashcardModif;
+        }
+
         $manager->flush();
     }
+   
 }

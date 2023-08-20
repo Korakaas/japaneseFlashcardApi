@@ -5,8 +5,8 @@ namespace App\Entity;
 use App\Repository\DeckRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DeckRepository::class)]
 class Deck
@@ -16,40 +16,52 @@ class Deck
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(["getDecks"])]
+    #[ORM\ManyToOne(inversedBy: 'decks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     #[ORM\Column(length: 40)]
     private ?string $name = null;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?bool $public = null;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?bool $reverse = null;
 
-    #[Groups(["getDecks"])]
-    #[ORM\OneToMany(mappedBy: 'deck', targetEntity: Flashcard::class, orphanRemoval: true)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\ManyToMany(targetEntity: Flashcard::class, mappedBy: 'decks')]
     private Collection $flashcards;
 
-    // #[Groups(["getDecks"])]
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'decks')]
-    private Collection $user;
-
-    // #[Groups(["getDecks"])]
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: DailyStats::class, orphanRemoval: true)]
     private Collection $dailyStats;
 
     public function __construct()
     {
         $this->flashcards = new ArrayCollection();
-        $this->user = new ArrayCollection();
         $this->dailyStats = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -69,7 +81,7 @@ class Deck
         return $this->public;
     }
 
-    public function setPublic(bool $public): static
+    public function setPublic(?bool $public): static
     {
         $this->public = $public;
 
@@ -81,9 +93,33 @@ class Deck
         return $this->reverse;
     }
 
-    public function setReverse(bool $reverse): static
+    public function setReverse(?bool $reverse): static
     {
         $this->reverse = $reverse;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
@@ -100,7 +136,7 @@ class Deck
     {
         if (!$this->flashcards->contains($flashcard)) {
             $this->flashcards->add($flashcard);
-            $flashcard->setDeck($this);
+            $flashcard->addDeck($this);
         }
 
         return $this;
@@ -109,35 +145,8 @@ class Deck
     public function removeFlashcard(Flashcard $flashcard): static
     {
         if ($this->flashcards->removeElement($flashcard)) {
-            // set the owning side to null (unless already changed)
-            if ($flashcard->getDeck() === $this) {
-                $flashcard->setDeck(null);
-            }
+            $flashcard->removeDeck($this);
         }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, User>
-     */
-    public function getUser(): Collection
-    {
-        return $this->user;
-    }
-
-    public function addUser(User $user): static
-    {
-        if (!$this->user->contains($user)) {
-            $this->user->add($user);
-        }
-
-        return $this;
-    }
-
-    public function removeUser(User $user): static
-    {
-        $this->user->removeElement($user);
 
         return $this;
     }

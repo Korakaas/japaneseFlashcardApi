@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\DailyStatsRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: DailyStatsRepository::class)]
 class DailyStats
@@ -13,68 +12,24 @@ class DailyStats
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    // #[Groups(["getDecks"])]
     private ?int $id = null;
-
-    #[ORM\Column]
-    // #[Groups(["getDecks"])]
-    private ?\DateTimeImmutable $date = null;
-
-    // #[Groups(["getDecks"])]
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $dailyReviewNumber = null;
-
-    // #[Groups(["getDecks"])]
-    #[ORM\Column(type: Types::SMALLINT)]
-    private ?int $correctAnswerNumber = null;
 
     #[ORM\ManyToOne(inversedBy: 'dailyStats')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Deck $deck = null;
 
-    #[ORM\ManyToOne(inversedBy: 'dailyStats')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\Column]
+    private ?\DateTimeImmutable $date = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $flashcardsReviewed = null;
+
+    #[ORM\Column(type: Types::SMALLINT)]
+    private ?int $correctAnswers = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getDate(): ?\DateTimeImmutable
-    {
-        return $this->date;
-    }
-
-    public function setDate(\DateTimeImmutable $date): static
-    {
-        $this->date = $date;
-
-        return $this;
-    }
-
-    public function getDailyReviewNumber(): ?int
-    {
-        return $this->dailyReviewNumber;
-    }
-
-    public function setDailyReviewNumber(?int $dailyReviewNumber): static
-    {
-        $this->dailyReviewNumber = $dailyReviewNumber;
-
-        return $this;
-    }
-
-    public function getCorrectAnswerNumber(): ?int
-    {
-        return $this->correctAnswerNumber;
-    }
-
-    public function setCorrectAnswerNumber(int $correctAnswerNumber): static
-    {
-        $this->correctAnswerNumber = $correctAnswerNumber;
-
-        return $this;
     }
 
     public function getDeck(): ?Deck
@@ -89,14 +44,38 @@ class DailyStats
         return $this;
     }
 
-    public function getUser(): ?user
+    public function getDate(): ?\DateTimeImmutable
     {
-        return $this->user;
+        return $this->date;
     }
 
-    public function setUser(?user $user): static
+    public function setDate(\DateTimeImmutable $date): static
     {
-        $this->user = $user;
+        $this->date = $date;
+
+        return $this;
+    }
+
+    public function getFlashcardsReviewed(): ?int
+    {
+        return $this->flashcardsReviewed;
+    }
+
+    public function setFlashcardsReviewed(int $flashcardsReviewed): static
+    {
+        $this->flashcardsReviewed = $flashcardsReviewed;
+
+        return $this;
+    }
+
+    public function getCorrectAnswers(): ?int
+    {
+        return $this->correctAnswers;
+    }
+
+    public function setCorrectAnswers(int $correctAnswers): static
+    {
+        $this->correctAnswers = $correctAnswers;
 
         return $this;
     }

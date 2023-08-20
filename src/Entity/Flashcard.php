@@ -3,9 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\FlashcardRepository;
-use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: FlashcardRepository::class)]
 #[ORM\InheritanceType("JOINED")]
@@ -17,50 +17,59 @@ use Symfony\Component\Serializer\Annotation\Groups;
     'vocabulary' => FlashcardVocabulary::class,
     'conjugation' => FlashcardConjugation::class
 ])]
-
 class Flashcard
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getDecks"])]
     private ?int $id = null;
 
-    #[Groups(["getDecks"])]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
     #[ORM\Column(length: 255)]
     private ?string $translation = null;
 
-    #[Groups(["getDecks"])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $furigana = null;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255)]
     private ?string $example = null;
 
-    #[Groups(["getDecks"])]
     #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $reviewedAt = null;
+    private ?bool $duplicate = null;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column(nullable: true)]
-    private ?int $reviewNumber = null;
+    #[ORM\ManyToMany(targetEntity: Deck::class, inversedBy: 'flashcards')]
+    private Collection $decks;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2, nullable: true)]
-    private ?string $reviewInterval = null;
+    #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: Review::class, orphanRemoval: true)]
+    private Collection $reviews;
 
-    #[Groups(["getDecks"])]
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $score = null;
+    #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: FlashcardModification::class, orphanRemoval: true)]
+    private Collection $flashcardModifications;
 
-    #[ORM\ManyToOne(inversedBy: 'flashcards')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Deck $deck = null;
+    public function __construct()
+    {
+        $this->decks = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
+        $this->flashcardModifications = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
     }
 
     public function getTranslation(): ?string
@@ -92,69 +101,105 @@ class Flashcard
         return $this->example;
     }
 
-    public function setExample(?string $example): static
+    public function setExample(string $example): static
     {
         $this->example = $example;
 
         return $this;
     }
 
-    public function getReviewedAt(): ?\DateTimeImmutable
+    public function isDuplicate(): ?bool
     {
-        return $this->reviewedAt;
+        return $this->duplicate;
     }
 
-    public function setReviewedAt(?\DateTimeImmutable $reviewedAt): static
+    public function setDuplicate(?bool $duplicate): static
     {
-        $this->reviewedAt = $reviewedAt;
+        $this->duplicate = $duplicate;
 
         return $this;
     }
 
-    public function getReviewNumber(): ?int
+    /**
+     * @return Collection<int, Deck>
+     */
+    public function getDecks(): Collection
     {
-        return $this->reviewNumber;
+        return $this->decks;
     }
 
-    public function setReviewNumber(?int $reviewNumber): static
+    public function addDeck(Deck $deck): static
     {
-        $this->reviewNumber = $reviewNumber;
+        if (!$this->decks->contains($deck)) {
+            $this->decks->add($deck);
+        }
 
         return $this;
     }
 
-    public function getReviewInterval(): ?string
+    public function removeDeck(Deck $deck): static
     {
-        return $this->reviewInterval;
-    }
-
-    public function setReviewInterval(?string $reviewInterval): static
-    {
-        $this->reviewInterval = $reviewInterval;
+        $this->decks->removeElement($deck);
 
         return $this;
     }
 
-    public function getScore(): ?int
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
     {
-        return $this->score;
+        return $this->reviews;
     }
 
-    public function setScore(?int $score): static
+    public function addReview(Review $review): static
     {
-        $this->score = $score;
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setFlashcard($this);
+        }
 
         return $this;
     }
 
-    public function getDeck(): ?Deck
+    public function removeReview(Review $review): static
     {
-        return $this->deck;
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getFlashcard() === $this) {
+                $review->setFlashcard(null);
+            }
+        }
+
+        return $this;
     }
 
-    public function setDeck(?Deck $deck): static
+    /**
+     * @return Collection<int, FlashcardModification>
+     */
+    public function getFlashcardModifications(): Collection
     {
-        $this->deck = $deck;
+        return $this->flashcardModifications;
+    }
+
+    public function addFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if (!$this->flashcardModifications->contains($flashcardModification)) {
+            $this->flashcardModifications->add($flashcardModification);
+            $flashcardModification->setFlashcard($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if ($this->flashcardModifications->removeElement($flashcardModification)) {
+            // set the owning side to null (unless already changed)
+            if ($flashcardModification->getFlashcard() === $this) {
+                $flashcardModification->setFlashcard(null);
+            }
+        }
 
         return $this;
     }
