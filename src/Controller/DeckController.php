@@ -99,17 +99,19 @@ class DeckController extends AbstractController
         UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
 
+        $user = $this->getUser();
         $deck = $this->serializer->deserialize($request->getContent(), Deck::class, 'json');
+        $deck->setUser($user);
         $this->em->persist($deck);
         $this->em->flush();
+        
+        $location = $urlGenerator->generate(
+            'api_detailDeck',
+            ['id' => $deck->getId()],
+            UrlGeneratorInterface::ABSOLUTE_URL
+        );
+        $deckArray = $deck->toArray();
 
-        $jsonDeck = $this->serializer->serialize($deck, 'json', [
-            'groups' => 'getDecks',
-            'json_encode_options' => JSON_PRETTY_PRINT
-        ]);
-
-        $location = $urlGenerator->generate('detailDeck', ['id' => $deck->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return new JsonResponse($jsonDeck, Response::HTTP_CREATED, ["Location" => $location], true);
+        return new JsonResponse($deckArray, Response::HTTP_CREATED, ["Location" => $location]);
     }
 }

@@ -217,8 +217,17 @@ class Deck
         return $this;
     }
 
-    public function toArray()
+    public function toArray(): array
     {
-        return get_object_vars($this);
+        return  [
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'public' => $this->public,
+            'reverse' => $this->reverse,
+            'createdAt'=> $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+            'user' => $this->user->toArray()
+        ];
     }
 }
