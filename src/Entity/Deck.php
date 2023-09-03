@@ -25,26 +25,27 @@ class Deck
     private ?User $user = null;
 
     #[ORM\Column(length: 40)]
-    #[Assert\NotBlank(message: "Le titre du paquet est obligatoire")]
+    #[Assert\NotBlank(message: "Le titre du paquet est obligatoire", groups: ['deck_update'])]
     #[Assert\Length(
         min: 1,
         max: 40,
         minMessage: "Le titre doit faire au moins {{ limit }} caractères",
-        maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères"
+        maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères",
+        groups: ['deck_update']
     )]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", 'deck_update'])]
     private ?string $name = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", 'deck_update'])]
     private ?bool $public = false;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", 'deck_update'])]
     private ?bool $reverse = false;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", 'deck_update'])]
     private ?string $description = null;
 
     #[ORM\Column]
@@ -225,7 +226,7 @@ class Deck
             'description' => $this->description,
             'public' => $this->public,
             'reverse' => $this->reverse,
-            'createdAt'=> $this->createdAt,
+            'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
             'user' => $this->user->toArray()
         ];
