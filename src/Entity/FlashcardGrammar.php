@@ -5,16 +5,25 @@ namespace App\Entity;
 use App\Repository\FlashcardGrammarRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FlashcardGrammarRepository::class)]
 class FlashcardGrammar extends Flashcard
 {
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $grammarPoint = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'règle de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $grammarRule = null;
 
     public function getGrammarPoint(): ?string

@@ -6,6 +6,7 @@ use App\Entity\Deck;
 use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Service\DeckService;
+use App\Service\SerializerService;
 use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -68,10 +69,10 @@ class DeckController extends AbstractController
     #[Route('/decks/{id}', name: 'detailDeck', methods: ['GET'])]
     public function getDetailDeck(
         Deck $deck,
-        DeckService $deckService
+        SerializerService $serializerService
     ): JsonResponse {
 
-        $jsonDeck =  $deckService->serializeDeck(
+        $jsonDeck =  $serializerService->serializeDeck(
             $deck,
             'getDetailDeck'
         );
@@ -122,10 +123,10 @@ class DeckController extends AbstractController
     #[Route('/user/decks/{id}', name: 'userDetailDeck', methods: ['GET'])]
     public function getUserDetailDeck(
         Deck $deck,
-        DeckService $deckService
+        SerializerService $serializerService
     ): JsonResponse {
 
-        $jsonDeck =  $deckService->serializeDeck(
+        $jsonDeck =  $serializerService->serializeDeck(
             $deck,
             'getDetailDeck'
         );

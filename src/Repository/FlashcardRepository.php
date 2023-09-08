@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\Deck;
 use App\Entity\Flashcard;
+use App\Entity\Review;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpParser\Node\Expr\Cast\Array_;
 
@@ -38,7 +41,12 @@ class FlashcardRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function findOneByDeck($deckId): ?array
+    /**
+     * Undocumented function
+     *
+     * @return array|null
+     */
+    public function findOneByDeck(): ?array
     {
         return $this->createQueryBuilder('f')
             ->select('f.translation', 'f.furigana', 'f.example', ' f.createdAt', 'f.updatedAt')
@@ -47,5 +55,53 @@ class FlashcardRepository extends ServiceEntityRepository
             ->setMaxResults(1)
             ->getOneOrNullResult()
         ;
+    }
+
+    /**
+     * Retourne une carte en fonction de son id et du deck auxquelle elle appartient
+     *
+     * @param int $deckId
+     * @param int $flashcardId
+     * @return Flashcard|null
+     */
+    public function findOneByIdAndDeck(int $deckId, int $flashcardId): ?Flashcard
+    {
+        return $this->createQueryBuilder('f')
+        ->innerJoin('f.decks', 'd')
+        ->where('f.id = :flashcardId')
+        ->andWhere('d.id = :deckId')
+        ->setParameter('flashcardId', $flashcardId)
+        ->setParameter('deckId', $deckId)
+        ->getQuery()
+        ->getOneOrNullResult();
+    }
+
+    /**
+     * Retourne 20 cartes à réviser
+     * Les cartes sont séléctionnées en fonction de l'utilisateur,
+     * du deck auxquelle apparitent la carte
+     * et dont la date de révsion date de plus longtemps que l'interval enregistré
+     *
+     * @param int $deckId Le deck de la carte
+     * @param int $userId L'utilisateur connecté
+     * @param DateTime $todayDate La date du jour
+     * @param int $limit Le nombre de carte max à retourner
+     * @return array|null
+     */
+    public function findByToReview(int $deckId, int $userId, DateTime $todayDate, $limit = 20): ?array
+    {
+        return $this->createQueryBuilder('f')
+        ->innerJoin('f.decks', 'd')
+        ->innerJoin('f.user', 'u')
+        ->leftJoin('f.reviews', 'r') // Utilisation d'une jointure gauche (left join) pour les avis
+        ->where('u.id = :userId')
+        ->andWhere('d.id = :deckId')
+        ->andWhere("((r.reviewedAt IS NULL) OR (DATE_ADD(r.reviewedAt, r.intervalReview, 'DAY') < :todayDate))")
+        ->setParameter('deckId', $deckId)
+        ->setParameter('userId', $userId)
+        ->setParameter('todayDate', $todayDate)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
     }
 }

@@ -8,8 +8,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FlashcardRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 #[ORM\InheritanceType("JOINED")]
 #[ORM\DiscriminatorColumn(name: 'type', type: 'string')]
 #[ORM\DiscriminatorMap([
@@ -19,7 +21,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
     'vocabulary' => FlashcardVocabulary::class,
     'conjugation' => FlashcardConjugation::class
 ])]
-#[ORM\HasLifecycleCallbacks]
 class Flashcard
 {
     #[ORM\Id]
@@ -28,23 +29,35 @@ class Flashcard
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\NotBlank(message: "La traduction est obligatoire")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le traduction ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $translation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ furigana ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $furigana = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "L'exemple' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $example = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck"])]
     private ?bool $duplicate = false;
 
     #[ORM\ManyToMany(targetEntity: Deck::class, inversedBy: 'flashcards')]
@@ -54,18 +67,22 @@ class Flashcard
     private Collection $reviews;
 
     #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: FlashcardModification::class, orphanRemoval: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private Collection $flashcardModifications;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'flashcards')]
+    private Collection $user;
 
     public function __construct()
     {
         $this->decks = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->flashcardModifications = new ArrayCollection();
+        $this->user = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -73,12 +90,13 @@ class Flashcard
         return $this->id;
     }
 
-    #[ORM\PrePersist]
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
     }
 
+    #[ORM\PrePersist]
     public function setCreatedAt(): self
     {
         $this->createdAt = new DateTimeImmutable('now');
@@ -228,6 +246,73 @@ class Flashcard
     public function setUpdatedAt(): self
     {
         $this->updatedAt = new DateTimeImmutable('now');
+
+        return $this;
+    }
+
+    public function toArray(): array
+    {
+        $data =  [
+            'id' => $this->id,
+            'translation' => $this->translation,
+            'furigana' => $this->furigana,
+            'example' => $this->example,
+            'createdAt' => $this->createdAt,
+            'updatedAt' => $this->updatedAt,
+        ];
+
+        if ($this instanceof FlashcardKanji) {
+            $data['onyomi'] = $this->getOnyomi();
+            $data['kunyomi'] = $this->getKunyomi();
+            $data['kanji'] = $this->getKanji();
+        }
+        if ($this instanceof FlashcardGrammar) {
+            $data['grammarRule'] = $this->getGrammarRule();
+            $data['grammarPoint'] = $this->getGrammarPoint();
+        }
+        if ($this instanceof FlashcardVocabulary) {
+            $data['word'] = $this->getWord();
+            $data['image'] = $this->getImage();
+            $data['audio'] = $this->getAudio();
+        }
+        if ($this instanceof FlashcardConjugation) {
+            $data['polite'] = $this->getPolite();
+            $data['negative'] = $this->getNegative();
+            $data['conditionnalBa'] = $this->getConditionnalBa();
+            $data['conditionalTara'] = $this->getConditionalTara();
+            $data['imperative'] = $this->getImperative();
+            $data['volitionnal'] = $this->getVolitionnal();
+            $data['causative'] = $this->getCausative();
+            $data['potential'] = $this->getPotential();
+            $data['taForm'] = $this->getTaForm();
+            $data['teForm'] = $this->getTeForm();
+
+        }
+
+        return $data;
+
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUser(): Collection
+    {
+        return $this->user;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->user->contains($user)) {
+            $this->user->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        $this->user->removeElement($user);
 
         return $this;
     }

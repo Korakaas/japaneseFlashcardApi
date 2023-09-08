@@ -46,11 +46,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: FlashcardModification::class, orphanRemoval: true)]
     private Collection $flashcardModifications;
 
+    #[ORM\ManyToMany(targetEntity: Flashcard::class, mappedBy: 'user')]
+    private Collection $flashcards;
+
     public function __construct()
     {
         $this->decks = new ArrayCollection();
         $this->reviews = new ArrayCollection();
         $this->flashcardModifications = new ArrayCollection();
+        $this->flashcards = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -254,5 +258,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'pseudo' => $this->pseudo,
             'email' => $this->email,
         ];
+    }
+
+    /**
+     * @return Collection<int, Flashcard>
+     */
+    public function getFlashcards(): Collection
+    {
+        return $this->flashcards;
+    }
+
+    public function addFlashcard(Flashcard $flashcard): static
+    {
+        if (!$this->flashcards->contains($flashcard)) {
+            $this->flashcards->add($flashcard);
+            $flashcard->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlashcard(Flashcard $flashcard): static
+    {
+        if ($this->flashcards->removeElement($flashcard)) {
+            $flashcard->removeUser($this);
+        }
+
+        return $this;
     }
 }

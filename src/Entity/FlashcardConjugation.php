@@ -5,48 +5,89 @@ namespace App\Entity;
 use App\Repository\FlashcardConjugationRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FlashcardConjugationRepository::class)]
 class FlashcardConjugation extends Flashcard
 {
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $polite = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme negative' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $negative = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme conditionnelle en Ba' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $conditionnalBa = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme contionnelle en Tara' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $conditionalTara = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme imperative' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $imperative = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme volitive' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $volitionnal = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme causatif' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $causative = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme potentiel' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $potential = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme en te' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $teForm = null;
 
     #[ORM\Column(length: 30)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme en ta' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $taForm = null;
 
     public function getPolite(): ?string

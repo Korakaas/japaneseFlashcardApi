@@ -82,9 +82,13 @@ class AppFixtures extends Fixture
             $flashcardKanji->setExample("Example " . $i);
             $flashcardKanji->setKunyomi("Kunyomi " . $i);
             $flashcardKanji->setOnyomi("Onyomi " . $i);
+            $flashcardKanji->setKanji("Kanji " . $i);
             $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardKanji->setDuplicate(1);
+            $deck = $flashcardKanji->getDecks()->toArray()[array_rand($flashcardKanji->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $flashcardKanji->addUser($user);
 
             $manager->persist($flashcardKanji);
             $listflashcardKanji[] = $flashcardKanji;
@@ -104,6 +108,9 @@ class AppFixtures extends Fixture
             $flashcardGrammar->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardGrammar->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardGrammar->setDuplicate(1);
+            $deck = $flashcardGrammar->getDecks()->toArray()[array_rand($flashcardGrammar->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $flashcardGrammar->addUser($user);
             $manager->persist($flashcardGrammar);
             $listflashcardGrammar[] = $flashcardGrammar;
         }
@@ -122,6 +129,9 @@ class AppFixtures extends Fixture
             $flashcardVocabulary->setAudio("Audio " . $i);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
+            $deck = $flashcardVocabulary->getDecks()->toArray()[array_rand($flashcardVocabulary->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $flashcardVocabulary->addUser($user);
             $flashcardVocabulary->setDuplicate(1);
 
             $manager->persist($flashcardVocabulary);
@@ -149,6 +159,9 @@ class AppFixtures extends Fixture
             $flashcardConjugation->setTaForm("TaForm " . $i);
             $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
+            $deck = $flashcardConjugation->getDecks()->toArray()[array_rand($flashcardConjugation->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $flashcardConjugation->addUser($user);
             $flashcardConjugation->setDuplicate(1);
 
 
@@ -189,8 +202,11 @@ class AppFixtures extends Fixture
 
             $review = new Review();
 
-            $review->setFlashcard($listFlascards[array_rand($listFlascards)]);
-            $review->setUser($listUser[array_rand($listUser)]);
+            $flashcard = $listFlascards[array_rand($listFlascards)];
+            $review->setFlashcard($flashcard);
+            $deck = $flashcard->getDecks()->toArray()[array_rand($flashcard->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $review->setUser($user);
             $review->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
             $review->setReviewNumber(mt_rand(0, 30));
             $review->setScore(mt_rand(0, 5));
@@ -200,28 +216,50 @@ class AppFixtures extends Fixture
             $listReviews[] = $review;
         }
 
-        // Création des modifications de Flashcard
-        $listFlashcardModifications = [];
-        $listchamps = [
-            'translation', 'furigana', 'example', 'polite',
-            'negative', 'conditional_ba', 'conditional_tara',
-            'imperative', 'volitional', 'causative', 'potential',
-            'teForm', 'taform', 'onyomi', 'kunyomi', 'grammarPoint',
-            'grammarRule', 'word', 'image', 'audio'
-        ];
-        for ($i = 0; $i < 100; $i++) {
-            $nbChamps = mt_rand(1, count($listchamps));
-            shuffle($listchamps);
-            $modification = [];
-            for ($j = 0; $j < $nbChamps; $j++) {
-                $champ = $listchamps[$j];
-                $modification[$champ] = 'modifcations' . $i;
-            }
-            $flashcardModif = new FlashcardModification();
 
-            $flashcardModif->setFlashcard($listFlascards[array_rand($listFlascards)]);
-            $flashcardModif->setUser($listUser[array_rand($listUser)]);
-            $flashcardModif->setModifications($modification);
+        for ($i = 0; $i < 25; $i++) {
+
+            $flashcardModif = new FlashcardModification();
+            $flashcard = $listFlascards[array_rand($listFlascards)];
+            $flashcardModif->setFlashcard($flashcard);
+
+            $flashcardModif->setTranslation("M Translation " . $i);
+            $flashcardModif->setFurigana("M KaFurigananji " . $i);
+            $flashcardModif->setExample("M Example " . $i);
+
+            if($flashcard instanceof FlashcardKanji) {
+                $flashcardModif->setKanji("M Kanji " . $i);
+                $flashcardModif->setOnyomi("M Onyomi " . $i);
+                $flashcardModif->setKunyomi("M Kunyomi " . $i);
+
+            }
+            if($flashcard instanceof FlashcardGrammar) {
+                $flashcardModif->setGrammarPoint("M GrammarPoint " . $i);
+                $flashcardModif->setGrammarRule("M GrammarRule " . $i);
+            }
+            if($flashcard instanceof FlashcardConjugation) {
+                $flashcardModif->setPolite("M Polite " . $i);
+                $flashcardModif->setNegative("M Negative " . $i);
+                $flashcardModif->setConditionnalBa("M ConditionnalBa " . $i);
+                $flashcardModif->setConditionnalTara("M ConditionnalTara " . $i);
+                $flashcardModif->setImperative("M Imperative " . $i);
+                $flashcardModif->setVolitional("M Volitional " . $i);
+                $flashcardModif->setCausative("M Causative " . $i);
+                $flashcardModif->setPotential("M Potential " . $i);
+                $flashcardModif->setTaForm("M TaForm " . $i);
+                $flashcardModif->setTeForm("M TeForm " . $i);
+            }
+            if($flashcard instanceof FlashcardVocabulary) {
+                $flashcardModif->setWord("M Word " . $i);
+                $flashcardModif->setAudio("M Audio " . $i);
+                $flashcardModif->setImage("M Image " . $i);
+
+            }
+            $deck = $flashcard->getDecks()->toArray()[array_rand($flashcard->getDecks()->toArray())];
+            $user = $deck->getUser();
+            $flashcardModif->setDeck($deck);
+            $flashcardModif->setUser($user);
+
             $manager->persist($flashcardModif);
             $listFlashcardModifications[] = $flashcardModif;
         }

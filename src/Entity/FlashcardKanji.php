@@ -5,17 +5,33 @@ namespace App\Entity;
 use App\Repository\FlashcardKanjiRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FlashcardKanjiRepository::class)]
 class FlashcardKanji extends Flashcard
 {
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 60,
+        maxMessage: "Le champ 'Onyomi' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $onyomi = null;
 
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck"])]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\Length(
+        max: 60,
+        maxMessage: "Le champ 'Kunyomi' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $kunyomi = null;
+
+    #[ORM\Column(length: 10)]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: "Le champ 'kanji' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $Kanji = null;
 
     public function getOnyomi(): ?string
     {
@@ -37,6 +53,18 @@ class FlashcardKanji extends Flashcard
     public function setKunyomi(?string $kunyomi): static
     {
         $this->kunyomi = $kunyomi;
+
+        return $this;
+    }
+
+    public function getKanji(): ?string
+    {
+        return $this->Kanji;
+    }
+
+    public function setKanji(string $Kanji): static
+    {
+        $this->Kanji = $Kanji;
 
         return $this;
     }

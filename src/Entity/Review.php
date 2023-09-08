@@ -31,7 +31,7 @@ class Review
     #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1)]
     private ?string $easeFactor = null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
+    #[ORM\Column(type: Types::SMALLINT)]
     private ?string $intervalReview = null;
 
     #[ORM\Column(type: Types::SMALLINT)]

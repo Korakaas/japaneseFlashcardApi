@@ -18,6 +18,7 @@ class Deck
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getDetailDeck"])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'decks')]
@@ -27,9 +28,7 @@ class Deck
     #[ORM\Column(length: 40)]
     #[Assert\NotBlank(message: "Le titre du paquet est obligatoire", groups: ['deck_update'])]
     #[Assert\Length(
-        min: 1,
         max: 40,
-        minMessage: "Le titre doit faire au moins {{ limit }} caractères",
         maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères",
         groups: ['deck_update']
     )]
@@ -63,10 +62,14 @@ class Deck
     #[Groups(["getDetailDeck"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'deck', targetEntity: FlashcardModification::class, orphanRemoval: true)]
+    private Collection $flashcardModifications;
+
     public function __construct()
     {
         $this->flashcards = new ArrayCollection();
         $this->dailyStats = new ArrayCollection();
+        $this->flashcardModifications = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -230,5 +233,35 @@ class Deck
             'updatedAt' => $this->updatedAt,
             'user' => $this->user->toArray()
         ];
+    }
+
+    /**
+     * @return Collection<int, FlashcardModification>
+     */
+    public function getFlashcardModifications(): Collection
+    {
+        return $this->flashcardModifications;
+    }
+
+    public function addFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if (!$this->flashcardModifications->contains($flashcardModification)) {
+            $this->flashcardModifications->add($flashcardModification);
+            $flashcardModification->setDeck($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFlashcardModification(FlashcardModification $flashcardModification): static
+    {
+        if ($this->flashcardModifications->removeElement($flashcardModification)) {
+            // set the owning side to null (unless already changed)
+            if ($flashcardModification->getDeck() === $this) {
+                $flashcardModification->setDeck(null);
+            }
+        }
+
+        return $this;
     }
 }
