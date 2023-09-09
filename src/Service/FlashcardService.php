@@ -2,18 +2,12 @@
 
 namespace App\Service;
 
-use App\Entity\Deck;
 use App\Entity\Flashcard;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Repository\FlashcardRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Entity\FlashcardConjugation;
-use App\Entity\FlashcardGrammar;
-use App\Entity\FlashcardKanji;
-use App\Entity\FlashcardVocabulary;
 use DateTime;
-use Symfony\Component\Validator\Constraints\Date;
 
 class FlashcardService
 {

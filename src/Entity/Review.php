@@ -26,12 +26,12 @@ class Review
     private ?\DateTimeImmutable $reviewedAt = null;
 
     #[ORM\Column]
-    private ?int $reviewNumber = null;
+    private ?int $knownLevel= null;
 
-    #[ORM\Column(type: Types::DECIMAL, precision: 3, scale: 1)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2)]
     private ?string $easeFactor = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
     private ?string $intervalReview = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
@@ -78,14 +78,14 @@ class Review
         return $this;
     }
 
-    public function getReviewNumber(): ?int
+    public function getknownLevel(): ?int
     {
-        return $this->reviewNumber;
+        return $this->knownLevel;
     }
 
-    public function setReviewNumber(int $reviewNumber): static
+    public function setknownLevel(int $knownLevel): static
     {
-        $this->reviewNumber = $reviewNumber;
+        $this->knownLevel= $knownLevel;
 
         return $this;
     }

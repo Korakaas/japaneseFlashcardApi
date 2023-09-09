@@ -208,7 +208,7 @@ class AppFixtures extends Fixture
             $user = $deck->getUser();
             $review->setUser($user);
             $review->setReviewedAt(new DateTimeImmutable("$year-$month-$day"));
-            $review->setReviewNumber(mt_rand(0, 30));
+            $review->setKnownLevel(mt_rand(0, 30));
             $review->setScore(mt_rand(0, 5));
             $review->setIntervalReview(mt_rand(0, 364) + (mt_rand(0, PHP_INT_MAX - 1) / PHP_INT_MAX));
             $review->setEaseFactor(mt_rand(130, 250) / 100);

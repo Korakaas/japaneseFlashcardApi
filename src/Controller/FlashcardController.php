@@ -92,7 +92,9 @@ class FlashcardController extends AbstractController
         $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
 
         $flashcardToReturn = $flashcardToReturn->toArray();
-        $flashcardModif = $this->flashcardModificationRepository->findOneBy(['deck' => $deckId, 'flashcard' => $flaschardId]);
+        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
+            ['deck' => $deckId, 'flashcard' => $flaschardId]
+        );
         if($flashcardModif) {
             $flashcardModif = $serializerService->serializeFlashcardModification($flashcardModif, 'getFlashcardModif');
             $flashcardModif = json_decode($flashcardModif, true);
@@ -168,7 +170,9 @@ class FlashcardController extends AbstractController
         $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
 
         $flashcardToReturn = $flashcardToReturn->toArray();
-        $flashcardModif = $this->flashcardModificationRepository->findOneBy(['deck' => $deckId, 'flashcard' => $flaschardId]);
+        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
+            ['deck' => $deckId, 'flashcard' => $flaschardId]
+        );
         if($flashcardModif) {
             $flashcardModif = $serializerService->serializeFlashcardModification($flashcardModif, 'getFlashcardModif');
             $flashcardModif = json_decode($flashcardModif, true);
@@ -414,50 +418,4 @@ class FlashcardController extends AbstractController
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
-
-
-
-
-    // /**
-    //  * Permet à l'utilisateur connecté de copier le flashcard d'un autre utilisateur
-    //  *
-    //  * @param Flashcard $flashcardToCopy
-    //  * @param Request $request
-    //  * @throws \HttpException si l'user est inconnu ou n'a pas accès au flashcard
-    //  * @return JsonResponse
-    //  */
-    // #[Route('/flashcards/{id}', name: "duplicateFlashcard", methods:['POST'])]
-    // public function duplicateFlashcard(
-    //     Flashcard $flashcardToCopy,
-    // ): JsonResponse {
-
-    //     /**
-    //      * @var User
-    //      */
-    //     $user = $this->getUser();
-    //     $this->userService->handleNoUser($user);
-
-
-    //     $newFlashcard = new Flashcard();
-
-    //     $newFlashcard->setName($flashcardToCopy->getName());
-    //     $newFlashcard->setDescription($flashcardToCopy->getDescription());
-    //     $newFlashcard->setPublic($flashcardToCopy->isPublic());
-    //     $newFlashcard->setReverse($flashcardToCopy->isReverse());
-    //     $newFlashcard->setUser($user);
-
-    //     $flaschards = $flashcardToCopy->getFlashcards();
-
-    //     foreach($flaschards as $flaschard) {
-    //         $newFlashcard->addFlashcard($flaschard);
-    //         $flaschard->setDuplicate(true);
-    //     }
-
-    //     $this->em->persist($newFlashcard);
-    //     $this->em->flush();
-
-    //     $flashcardArray = $newFlashcard->toArray();
-
-    //     return new JsonResponse($flashcardArray, JsonResponse::HTTP_NO_CONTENT, ['Content-Type' => 'application/json;charset=UTF-8']);
-    // }
 }
