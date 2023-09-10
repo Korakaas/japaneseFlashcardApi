@@ -23,14 +23,14 @@ class Deck
 
     #[ORM\ManyToOne(inversedBy: 'decks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotBlank(message: "Utilisateur obligatoire")]
     private ?User $user = null;
 
     #[ORM\Column(length: 40)]
-    #[Assert\NotBlank(message: "Le titre du paquet est obligatoire", groups: ['deck_update'])]
+    #[Assert\NotBlank(message: "Le titre du paquet est obligatoire")]
     #[Assert\Length(
         max: 40,
         maxMessage: "Le titre ne peut pas faire plus de {{ limit }} caractères",
-        groups: ['deck_update']
     )]
     #[Groups(["getDetailDeck", 'deck_update'])]
     private ?string $name = null;
@@ -45,6 +45,10 @@ class Deck
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(["getDetailDeck", 'deck_update'])]
+    #[Assert\Length(
+        max: 1024,
+        maxMessage: "La description ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $description = null;
 
     #[ORM\Column]

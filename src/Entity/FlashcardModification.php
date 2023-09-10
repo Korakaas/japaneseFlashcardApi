@@ -16,7 +16,7 @@ class FlashcardModification
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
-    #[Groups(["getDetailDeck"])]
+    // #[Groups(["getDetailDeck"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
@@ -24,91 +24,90 @@ class FlashcardModification
 
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(["getDetailDeck"])]
     private ?Deck $deck = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $translation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $furigana = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $example = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $polite = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $negative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $conditionnalBa = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $conditionnalTara = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $imperative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $volitional = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $causative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $potential = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $teForm = null;
 
     #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $taForm = null;
 
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $onyomi = null;
 
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $kunyomi = null;
 
     #[ORM\Column(length: 10, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $kanji = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups([ "getFlashcardModif"])]
     private ?string $grammarPoint = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $grammarRule = null;
 
     #[ORM\Column(length: 10, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $word = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getFlashcardModif"])]
+    #[Groups(["getFlashcardModif"])]
     private ?string $audio = null;
 
     public function getId(): ?int

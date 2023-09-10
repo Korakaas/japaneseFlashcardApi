@@ -36,4 +36,17 @@ class AccessService
             throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
         }
     }
+
+    /**
+    * Vérifie que le paquet est bien public.
+    *
+    * @param Deck $deck
+    * @throws HttpException
+    */
+    public function checkDeckPublic(Deck $deck): void
+    {
+        if (!$deck->isPublic()) {
+            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
+        }
+    }
 }

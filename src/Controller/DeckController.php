@@ -7,9 +7,8 @@ use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Service\AccessService;
 use App\Service\DeckService;
+use App\Service\FlashcardModificationService;
 use App\Service\SerializerService;
-
-;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -17,9 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route("/api", "api_")]
 class DeckController extends AbstractController
@@ -27,33 +24,38 @@ class DeckController extends AbstractController
     private $deckRepository;
     private $em;
     private $accessService;
+    private $flashcardModificationService;
+    private $deckService;
     private $serializer;
 
 
     public function __construct(
         DeckRepository $deckRepository,
         AccessService $accessService,
+        FlashcardModificationService $flashcardModificationService,
+        DeckService $deckService,
         SerializerInterface $serializer,
         EntityManagerInterface $em
     ) {
         $this->deckRepository = $deckRepository;
         $this->em = $em;
         $this->accessService = $accessService;
+        $this->deckService = $deckService;
+        $this->flashcardModificationService = $flashcardModificationService;
         $this->serializer = $serializer;
     }
 
     /**
-     * Retourne le nom de tous les decks
+     * Retourne le nom de tous les decks publics
      *
      * @return JsonResponse
      */
     #[Route('/decks', name: 'decks', methods: ['GET'])]
     public function getDeckList(): JsonResponse
     {
-        $deckList = $this->deckRepository->findAll();
+        $deckList = $this->deckRepository->findBy(['public' => true]);
         $deckNames = array_map(fn ($deck) => $deck->getName(), $deckList);
-        // dd($deckList);
-        // Create the JSON response with correct status code and headers
+
         return $this->json(
             $deckNames,
             Response::HTTP_OK,
@@ -74,17 +76,26 @@ class DeckController extends AbstractController
         SerializerService $serializerService
     ): JsonResponse {
 
+        //Verifie que le paquet est bien public
+        $this->accessService->checkDeckPublic($deck);
+
         $jsonDeck =  $serializerService->serializeDeck(
             $deck,
             'getDetailDeck'
         );
 
         $deckArray = json_decode($jsonDeck, true);
+
+        //on garde uniquement la première carte du paquet avec les modfications liées au deck s'il y en a
         $flashcardToKeep =  array_shift($deckArray['flashcards']);
+        $flashcardToKeep = $this->flashcardModificationService->getFlashcardModification(
+            $flashcardToKeep,
+            $deck
+        );
         $deckArray['flashcards'] = [$flashcardToKeep];
-        $jsonDeck = json_encode($deckArray, JSON_PRETTY_PRINT);
-        return new JsonResponse(
-            $jsonDeck,
+
+        return $this->json(
+            $deckArray,
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
@@ -103,11 +114,13 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
+
         $deckList = $this->deckRepository->findBy(['user' => $user->getId()]);
         $deckNames = array_map(fn ($deck) => $deck->getName(), $deckList);
 
-        return  new JsonResponse(
+        return $this->json(
             $deckNames,
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
@@ -137,17 +150,30 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
+
+        //récupère les modifications liées au paquet de chaque carte
+        $flashcards = [];
+        foreach($deck->getFlashcards() as $flashcard) {
+            $flashcard = $flashcard->toArray();
+            $flashcard = $this->flashcardModificationService->getFlashcardModification(
+                $flashcard,
+                $deck
+            );
+            $flashcards[] = $flashcard;
         }
+
         $deckArray = json_decode($jsonDeck, true);
-        $jsonDeck = json_encode($deckArray, JSON_PRETTY_PRINT);
-        return new JsonResponse(
-            $jsonDeck,
+        $deckArray['flashcards'] = $flashcards;
+
+        return $this->json(
+            $deckArray,
             Response::HTTP_OK,
-            ['Content-Type' => 'application/json;charset=UTF-8']
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
 
@@ -165,55 +191,61 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
-        if ($deckToDelete->getUser() !== $user) {
-            throw new HttpException(
-                Response::HTTP_UNAUTHORIZED,
-                'L\'utilisateur '.$user->getPseudo(). ' n\'a pas accès au deck'.$deckToDelete->getName()
-            );
-        }
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deckToDelete, $user);
+
         $this->em->remove($deckToDelete);
         $this->em->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json;charset=UTF-8']);
+        return $this->json(
+            null,
+            Response::HTTP_NO_CONTENT,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
 
     }
 
     /**
      * Permet à l'utilisateur de créer un deck
      *
-     * @param Deck $deck
      * @param Request $request
-     * @param UrlGeneratorInterface $urlGenerator
-     * @throws \HttpException si l'user est inconnu ou n'a pas accès au deck
+     * @throws \HttpException si
+     *  -l'user est inconnu
+     *  -l'user n'a pas accès au deck
+     *  -les données du formulaire sont incorrectes
      * @return JsonResponse
      */
-    #[Route('/decks', name: "createDeck", methods: ['POST'])]
+    #[Route('/user/decks', name: "createDeck", methods: ['POST'])]
     public function createDeck(
         Request $request,
-        UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
 
         /**
          * @var User
          */
         $user = $this->getUser();
+        //vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $deck = $this->serializer->deserialize($request->getContent(), Deck::class, 'json');
         $deck->setUser($user);
+
+        //validation des données
+        $this->deckService->validateDeck($deck);
+
         $this->em->persist($deck);
         $this->em->flush();
 
-        $location = $urlGenerator->generate(
-            'api_detailDeck',
-            ['id' => $deck->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
         $deckArray = $deck->toArray();
 
-        return new JsonResponse($deckArray, Response::HTTP_CREATED, ["Location" => $location]);
+        return $this->json(
+            $deckArray,
+            Response::HTTP_CREATED,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
 
     }
 
@@ -229,18 +261,17 @@ class DeckController extends AbstractController
     public function updateDeck(
         Request $request,
         Deck $deckToUpdate,
-        ValidatorInterface $validator
     ): JsonResponse {
 
         /**
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
-        if ($deckToUpdate->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deckToUpdate, $user);
 
         $data = $request->toArray();
 
@@ -257,22 +288,19 @@ class DeckController extends AbstractController
             $deckToUpdate->setReverse($data['reverse']);
         }
 
-        $errors = $validator->validate($deckToUpdate, null, ['deck_update']);
-
-        if (count($errors) > 0) {
-            $errorsmessage = [];
-            foreach ($errors as $error) {
-                $errorsmessage[] = $error->getMessage();
-            }
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsmessage));
-        }
+        //validation des données
+        $this->deckService->validateDeck($deckToUpdate);
 
         $this->em->persist($deckToUpdate);
         $this->em->flush();
 
         $deckArray = $deckToUpdate->toArray();
 
-        return new JsonResponse($deckArray, JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse(
+            $deckArray,
+            JsonResponse::HTTP_OK,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
 
     }
 
@@ -284,7 +312,7 @@ class DeckController extends AbstractController
      * @throws \HttpException si l'user est inconnu ou n'a pas accès au deck
      * @return JsonResponse
      */
-    #[Route('/decks/{id}', name: "duplicateDeck", methods:['POST'])]
+    #[Route('/duplicate/decks/{id}', name: "duplicateDeck", methods:['POST'])]
     public function duplicateDeck(
         Deck $deckToCopy,
     ): JsonResponse {
@@ -293,8 +321,11 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
+        //Vérifie que le paquet n'appartient pas déjà à l'utilisateur
+        $this->deckService->checkDeckToDuplicateUser($deckToCopy, $user);
 
         $newDeck = new Deck();
 
@@ -311,11 +342,18 @@ class DeckController extends AbstractController
             $flaschard->setDuplicate(true);
         }
 
+        //validation des données
+        $this->deckService->validateDeck($newDeck);
+
         $this->em->persist($newDeck);
         $this->em->flush();
 
         $deckArray = $newDeck->toArray();
 
-        return new JsonResponse($deckArray, JsonResponse::HTTP_NO_CONTENT, ['Content-Type' => 'application/json;charset=UTF-8']);
+        return new JsonResponse(
+            $deckArray,
+            JsonResponse::HTTP_OK,
+            ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 }

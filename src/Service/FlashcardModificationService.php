@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Deck;
 use App\Entity\Flashcard;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -9,10 +10,22 @@ use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
 use App\Entity\FlashcardVocabulary;
+use App\Repository\FlashcardModificationRepository;
 
 class FlashcardModificationService
 {
-    public function getFlashcardModificationData(Flashcard $flashcard, array $data)
+    private $serializerService;
+    private $flashcardModificationRepository;
+
+    public function __construct(
+        SerializerService $serializerService,
+        FlashcardModificationRepository $flashcardModificationRepository
+    ) {
+        $this->serializerService = $serializerService;
+        $this->flashcardModificationRepository = $flashcardModificationRepository;
+    }
+
+    public function setFlashcardModificationData(Flashcard $flashcard, array $data)
     {
         $modif = [];
         if (isset($data['translation'])) {
@@ -73,4 +86,27 @@ class FlashcardModificationService
 
         return $modif;
     }
+
+    public function getFlashcardModification(array $flashcard, Deck $deck): array
+    {
+        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
+            ['deck' => $deck->getId(), 'flashcard' => $flashcard['id']]
+        );
+        if($flashcardModif) {
+            $flashcardModif = $this->serializerService->serializeFlashcardModification(
+                $flashcardModif,
+                'getFlashcardModif'
+            );
+            $flashcardModif = json_decode($flashcardModif, true);
+            foreach($flashcardModif as $key => $value) {
+
+                if($value && array_key_exists($key, $flashcard)) {
+                    $flashcard[$key] = $value;
+                }
+            }
+        }
+
+        return $flashcard;
+    }
+
 }

@@ -26,6 +26,7 @@ class Flashcard
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -67,7 +68,7 @@ class Flashcard
     private Collection $reviews;
 
     #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: FlashcardModification::class, orphanRemoval: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     private Collection $flashcardModifications;
 
     #[ORM\Column(nullable: true)]
