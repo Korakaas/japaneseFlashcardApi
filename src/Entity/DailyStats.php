@@ -24,7 +24,7 @@ class DailyStats
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $flashcardsReviewed = null;
 
-    #[ORM\Column(type: Types::SMALLINT)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $correctAnswers = null;
 
     public function getId(): ?int

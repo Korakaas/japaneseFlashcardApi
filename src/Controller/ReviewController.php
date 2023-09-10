@@ -4,10 +4,9 @@ namespace App\Controller;
 
 use App\Repository\DeckRepository;
 use App\Repository\ReviewRepository;
+use App\Service\AccessService;
 use App\Service\FlashcardService;
 use App\Service\ReviewService;
-use App\Service\SerializerService;
-use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +19,7 @@ class ReviewController extends AbstractController
 {
     private $deckRepository;
     private $reviewRepository;
-    private $userService;
+    private $accessService;
     private $flashcardService;
     private $reviewService;
 
@@ -28,13 +27,13 @@ class ReviewController extends AbstractController
     public function __construct(
         DeckRepository $deckRepository,
         ReviewRepository $reviewRepository,
-        UserService $userService,
+        AccessService $accessService,
         FlashcardService $flashcardService,
         ReviewService $reviewService,
     ) {
         $this->deckRepository = $deckRepository;
         $this->reviewRepository = $reviewRepository;
-        $this->userService = $userService;
+        $this->accessService = $accessService;
         $this->reviewService = $reviewService;
         $this->flashcardService = $flashcardService;
     }
@@ -53,7 +52,7 @@ class ReviewController extends AbstractController
 
         //on verifie que l'utilisateur est connecté
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $deckId = $request->get('deckId');
         $flashcardId = $request->get('flashcardId');

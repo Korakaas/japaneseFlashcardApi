@@ -251,15 +251,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->id,
-            'pseudo' => $this->pseudo,
-            'email' => $this->email,
-        ];
-    }
-
     /**
      * @return Collection<int, Flashcard>
      */
@@ -285,5 +276,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'pseudo' => $this->pseudo,
+            'email' => $this->email,
+        ];
     }
 }

@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Deck;
 use App\Entity\User;
 use App\Repository\DeckRepository;
+use App\Service\AccessService;
 use App\Service\DeckService;
 use App\Service\SerializerService;
-use App\Service\UserService;
+
+;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,19 +26,19 @@ class DeckController extends AbstractController
 {
     private $deckRepository;
     private $em;
-    private $userService;
+    private $accessService;
     private $serializer;
 
 
     public function __construct(
         DeckRepository $deckRepository,
-        UserService $userService,
+        AccessService $accessService,
         SerializerInterface $serializer,
         EntityManagerInterface $em
     ) {
         $this->deckRepository = $deckRepository;
         $this->em = $em;
-        $this->userService = $userService;
+        $this->accessService = $accessService;
         $this->serializer = $serializer;
     }
 
@@ -101,7 +103,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
         $deckList = $this->deckRepository->findBy(['user' => $user->getId()]);
         $deckNames = array_map(fn ($deck) => $deck->getName(), $deckList);
 
@@ -135,7 +137,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         if ($deck->getUser() !== $user) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
@@ -163,7 +165,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         if ($deckToDelete->getUser() !== $user) {
             throw new HttpException(
@@ -197,7 +199,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $deck = $this->serializer->deserialize($request->getContent(), Deck::class, 'json');
         $deck->setUser($user);
@@ -234,7 +236,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         if ($deckToUpdate->getUser() !== $user) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
@@ -291,7 +293,7 @@ class DeckController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
 
         $newDeck = new Deck();

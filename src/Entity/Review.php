@@ -26,7 +26,7 @@ class Review
     private ?\DateTimeImmutable $reviewedAt = null;
 
     #[ORM\Column]
-    private ?int $knownLevel= null;
+    private ?int $knownLevel = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2)]
     private ?string $easeFactor = null;
@@ -85,7 +85,7 @@ class Review
 
     public function setknownLevel(int $knownLevel): static
     {
-        $this->knownLevel= $knownLevel;
+        $this->knownLevel = $knownLevel;
 
         return $this;
     }
@@ -124,5 +124,19 @@ class Review
         $this->score = $score;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'flashcardId' => $this->flashcard->getId(),
+            'userId' => $this->user->getId(),
+            'reviewed_at' => $this->reviewedAt,
+            'knownLevel' => $this->knownLevel,
+            'easeFactor' => $this->easeFactor,
+            'intervalReview' => $this->intervalReview,
+            'score' => $this->score,
+        ];
     }
 }

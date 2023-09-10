@@ -13,9 +13,9 @@ use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Repository\FlashcardModificationRepository;
 use App\Repository\ReviewRepository;
+use App\Service\AccessService;
 use App\Service\FlashcardService;
 use App\Service\SerializerService;
-use App\Service\UserService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -34,7 +34,7 @@ class FlashcardController extends AbstractController
     private $deckRepository;
     private $reviewRepository;
     private $em;
-    private $userService;
+    private $accessService;
     private $flashcardService;
     private $serializer;
 
@@ -43,7 +43,7 @@ class FlashcardController extends AbstractController
         FlashcardModificationRepository $flashcardModificationRepository,
         DeckRepository $deckRepository,
         ReviewRepository $reviewRepository,
-        UserService $userService,
+        AccessService $accessService,
         FlashcardService $flashcardService,
         SerializerInterface $serializer,
         EntityManagerInterface $em
@@ -52,7 +52,7 @@ class FlashcardController extends AbstractController
         $this->deckRepository = $deckRepository;
         $this->reviewRepository = $reviewRepository;
         $this->em = $em;
-        $this->userService = $userService;
+        $this->accessService = $accessService;
         $this->flashcardService = $flashcardService;
         $this->serializer = $serializer;
     }
@@ -125,7 +125,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
         if ($deck->getUser() !== $user) {
             throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
         }
@@ -158,7 +158,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
@@ -204,7 +204,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
@@ -263,7 +263,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $deckId = $request->get('id');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
@@ -323,7 +323,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
@@ -387,7 +387,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
-        $this->userService->handleNoUser($user);
+        $this->accessService->handleNoUser($user);
 
         $deckId = $request->get('deckId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
