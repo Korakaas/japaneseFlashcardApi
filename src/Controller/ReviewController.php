@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Repository\ReviewRepository;
 use App\Service\AccessService;
@@ -50,24 +51,28 @@ class ReviewController extends AbstractController
         Request $request,
     ): JsonResponse {
 
-        //on verifie que l'utilisateur est connecté
+        /**
+         * @var User
+         */
         $user = $this->getUser();
+        //Verifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
+
+        //Vérifie que le paquet appartient bien à l'utilisateur
         $deckId = $request->get('deckId');
-        $flashcardId = $request->get('flashcardId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
+        $this->accessService->checkDeckAccess($deck, $user);
 
-        //on vérifie que le paquet appartient bien à l'utilisateur
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
-
-        $score = $request->toArray()['score'] ?? null;
+        //Vérifie que la carte appartient bien au deck
+        $flashcardId = $request->get('flashcardId');
         $flashcardReviewed = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flashcardId);
-        $review = $this->reviewRepository->findOneBy(['user' => $user->getId(), 'flashcard' => $flashcardId]);
+
+
 
         //Traitement du score et ajsutement de la prochaine révision en fonction
+        $score = $request->toArray()['score'] ?? null;
+        $review = $this->reviewRepository->findOneBy(['user' => $user->getId(), 'flashcard' => $flashcardId]);
         $this->reviewService->updateReview($score, $flashcardReviewed, $review, $user);
 
         return new JsonResponse(

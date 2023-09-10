@@ -125,6 +125,10 @@ class DailyStatsController extends AbstractController
         // Enregistre les modifications dans la base de données
         $this->em->flush();
 
-        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+        return $this->json(
+            null,
+            Response::HTTP_OK,
+            headers: ['Content-Type' => 'application/json;charset=UTF-8']
+        );
     }
 }

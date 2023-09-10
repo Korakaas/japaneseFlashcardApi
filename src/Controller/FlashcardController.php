@@ -14,6 +14,7 @@ use App\Repository\DeckRepository;
 use App\Repository\FlashcardModificationRepository;
 use App\Repository\ReviewRepository;
 use App\Service\AccessService;
+use App\Service\FlashcardModificationService;
 use App\Service\FlashcardService;
 use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -32,33 +33,33 @@ class FlashcardController extends AbstractController
 {
     private $flashcardModificationRepository;
     private $deckRepository;
-    private $reviewRepository;
     private $em;
     private $accessService;
     private $flashcardService;
+    private $flashcardModificationService;
     private $serializer;
 
 
     public function __construct(
         FlashcardModificationRepository $flashcardModificationRepository,
         DeckRepository $deckRepository,
-        ReviewRepository $reviewRepository,
         AccessService $accessService,
         FlashcardService $flashcardService,
+        FlashcardModificationService $flashcardModificationService,
         SerializerInterface $serializer,
         EntityManagerInterface $em
     ) {
         $this->flashcardModificationRepository = $flashcardModificationRepository;
         $this->deckRepository = $deckRepository;
-        $this->reviewRepository = $reviewRepository;
         $this->em = $em;
         $this->accessService = $accessService;
         $this->flashcardService = $flashcardService;
+        $this->flashcardModificationService = $flashcardModificationService;
         $this->serializer = $serializer;
     }
 
     /**
-     * Retourne toutes les flashcards
+     * Retourne le nom de toutes les flashcards
      *
      * @return JsonResponse
      */
@@ -75,7 +76,7 @@ class FlashcardController extends AbstractController
     }
 
     /**
-     * Retourne le détail d'un flashcard
+     * Retourne le détail d'une flashcard
      *
      * @param Request $request
      * @param SerializerService $serializerService
@@ -84,27 +85,22 @@ class FlashcardController extends AbstractController
     #[Route('/decks/{deckId}/flashcards/{flashcardId}', name: 'detailFlashcard', methods: ['GET'])]
     public function getDetailFlashcard(
         Request $request,
-        SerializerService $serializerService
     ): JsonResponse {
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
+
+        //Vérifie que la carte existe et appartient bien au paquet
         $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
-
         $flashcardToReturn = $flashcardToReturn->toArray();
-        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
-            ['deck' => $deckId, 'flashcard' => $flaschardId]
-        );
-        if($flashcardModif) {
-            $flashcardModif = $serializerService->serializeFlashcardModification($flashcardModif, 'getFlashcardModif');
-            $flashcardModif = json_decode($flashcardModif, true);
-            foreach($flashcardModif as $key => $value) {
+        $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
 
-                if($value && array_key_exists($key, $flashcardToReturn)) {
-                    $flashcardToReturn[$key] = $value;
-                }
-            }
-        }
+        //récupère les modifications liées au deck de la carte
+        $flashcardToReturn = $this->flashcardModificationService->getFlashcardModification(
+            $flashcardToReturn,
+            $deck
+        );
+
         return new JsonResponse(
             $flashcardToReturn,
             Response::HTTP_OK,
@@ -125,10 +121,10 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
 
         $flashcardList = $deck->getFlashcards()->toArray();
         $flashcardNames = array_map(fn ($flashcard) => $flashcard->getTranslation(), $flashcardList);
@@ -151,7 +147,6 @@ class FlashcardController extends AbstractController
     #[Route('/user/decks/{deckId}/flashcards/{flashcardId}', name: 'userDetailFlashcard', methods: ['GET'])]
     public function getUserDetailFlashcard(
         Request $request,
-        SerializerService $serializerService
     ): JsonResponse {
 
         /**
@@ -163,26 +158,19 @@ class FlashcardController extends AbstractController
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
+
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
 
         $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
-
         $flashcardToReturn = $flashcardToReturn->toArray();
-        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
-            ['deck' => $deckId, 'flashcard' => $flaschardId]
-        );
-        if($flashcardModif) {
-            $flashcardModif = $serializerService->serializeFlashcardModification($flashcardModif, 'getFlashcardModif');
-            $flashcardModif = json_decode($flashcardModif, true);
-            foreach($flashcardModif as $key => $value) {
 
-                if($value && array_key_exists($key, $flashcardToReturn)) {
-                    $flashcardToReturn[$key] = $value;
-                }
-            }
-        }
+        //récupère les modifications liées au deck de la carte
+        $flashcardToReturn = $this->flashcardModificationService->getFlashcardModification(
+            $flashcardToReturn,
+            $deck
+        );
+
         return new JsonResponse(
             $flashcardToReturn,
             Response::HTTP_OK,
@@ -191,7 +179,7 @@ class FlashcardController extends AbstractController
     }
 
     /**
-     * Supprime une flashcard de l'utilisateur
+     * Supprime une flashcard de l'utilisateur ou ses modifications
      *
      * @param Flashcard $flashcardToDelete
      * @throws \HttpException si l'user est inconnu ou n'a pas accès au flashcard
@@ -204,44 +192,26 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
+
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
+
+        //Vérifie que la carte appartient bien au parquet
         $flashcardToDelete = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
 
-        $flashcardUsers = $flashcardToDelete->getUser();
-        if($flashcardToDelete->isDuplicate() && count($flashcardUsers) > 1) {
-            $flashcardModif = $this->flashcardModificationRepository->findOneBy(
-                ['deck' => $deckId, 'flashcard' => $flaschardId]
-            );
-            if($flashcardModif) {
-                $this->em->remove($flashcardModif);
-            }
-
-            $deck->removeFlashcard($flashcardToDelete);
-            $flashcardToDelete->removeUser($user);
-            if(count($flashcardUsers) === 1) {
-                $flashcardToDelete->setDuplicate(false);
-            }
-        } else {
-            $this->em->remove($flashcardToDelete);
-        }
-        $review = $this->reviewRepository->findOneBy(
-            ['user' => $user->getId(), 'flashcard' => $flaschardId]
+        //Supprime la carte ou les modifications selon si carte est dupliquée ou non
+        $this->flashcardService->deleteFlashcard($flashcardToDelete, $user, $deck);
+        return new JsonResponse(
+            null,
+            Response::HTTP_NO_CONTENT,
+            ['Content-Type' => 'application/json;charset=UTF-8']
         );
-        if($review) {
-            $this->em->remove($review);
-        }
-
-        $this->em->flush();
-
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json;charset=UTF-8']);
-
     }
 
     /**
@@ -263,14 +233,13 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $deckId = $request->get('id');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
-
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
         $data = json_decode($request->getContent(), true);
 
         switch ($data['type']) {
@@ -292,17 +261,14 @@ class FlashcardController extends AbstractController
 
         $flashcard->addDeck($deck);
 
+        //Vérifie que les données sont valides
+        $this->flashcardService->validateFlashcard($flashcard);
+
         $this->em->persist($flashcard);
         $this->em->flush();
-
-        $location = $urlGenerator->generate(
-            'api_detailFlashcard',
-            ['id' => $deckId, 'flashcardId' => $flashcard->getId()],
-            UrlGeneratorInterface::ABSOLUTE_URL
-        );
         $flashcardArray = $flashcard->toArray();
 
-        return new JsonResponse($flashcardArray, Response::HTTP_CREATED, ["Location" => $location]);
+        return new JsonResponse($flashcardArray, Response::HTTP_CREATED);
 
     }
 
@@ -317,50 +283,38 @@ class FlashcardController extends AbstractController
     #[Route('/user/decks/{deckId}/flashcards/{flashcardId}', name: "updateFlashcard", methods:['PUT'])]
     public function updateFlashcard(
         Request $request,
-        ValidatorInterface $validator
     ): JsonResponse {
         /**
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
         $deckId = $request->get('deckId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
-
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
         $data = $request->toArray();
 
+        //Vérifie que la carte appartient bien au deck
         $flashcardToUpdate = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
 
         if(!$flashcardToUpdate->isDuplicate()) {
-            dd($flashcardToUpdate);
             $this->flashcardService->updateFlashcardProperties($flashcardToUpdate, $data);
+            $this->flashcardService->validateFlashcard($flashcardToUpdate);
 
         } else {
-            $flashcardModification = new FlashcardModification();
-            $this->flashcardService->updateFlashcardProperties($flashcardToUpdate, $data);
-
-            $flashcardModification->setDeck($deck);
-            $flashcardModification->setUser($user);
-            $this->em->persist($flashcardModification);
-
+            $flashcardModification = $this->flashcardModificationService->setFlashcardModificationData(
+                $flashcardToUpdate,
+                $deck,
+                $data,
+                $user,
+            );
+            $this->flashcardModificationService->validateFlashcardModification($flashcardModification);
         }
 
-        $errors = $validator->validate($flashcardToUpdate, null);
-
-        if (count($errors) > 0) {
-            $errorsmessage = [];
-            foreach ($errors as $error) {
-                $errorsmessage[] = $error->getMessage();
-            }
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsmessage));
-        }
-
-        $this->em->persist($flashcardToUpdate);
         $this->em->flush();
 
         $flashcardArray = $flashcardToUpdate->toArray();
@@ -387,30 +341,29 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $deckId = $request->get('deckId');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
-        if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
-        }
 
-        $flaschardToReviewArray = $this->flashcardService->findFlashcardToreview((int) $deckId, $user->getId());
+        //Vérifie que le paquet appartient bien à l'utilisateur
+        $this->accessService->checkDeckAccess($deck, $user);
+
+        //Récupère un maximum de 20 cartes dont la date de revue est supérieur à celle du jour
+        $flaschardToReviewArray = $this->flashcardService->findFlashcardToreview(
+            $deckId,
+            $user->getId()
+        );
 
         $flaschardToReview = $flaschardToReviewArray[array_rand($flaschardToReviewArray)];
 
-        $flashcardModif = $this->flashcardModificationRepository->findOneBy(['deck' => $deckId, 'flashcard' => $flaschardToReview->getId()]);
+        //récupère les modifications liées au deck de la carte
         $flaschardToReview = $flaschardToReview->toArray();
-        if($flashcardModif) {
-            $flashcardModif = $serializerService->serializeFlashcardModification($flashcardModif, 'getFlashcardModif');
-            $flashcardModif = json_decode($flashcardModif, true);
-            foreach($flashcardModif as $key => $value) {
-
-                if($value && array_key_exists($key, $flaschardToReview)) {
-                    $flaschardToReview[$key] = $value;
-                }
-            }
-        }
+        $flaschardToReview = $this->flashcardModificationService->getFlashcardModification(
+            $flaschardToReview,
+            $deck
+        );
 
         return new JsonResponse(
             $flaschardToReview,

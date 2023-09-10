@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FlashcardConjugationRepository::class)]
 class FlashcardConjugation extends Flashcard
 {
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -18,7 +18,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $polite = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -26,7 +26,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $negative = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -34,7 +34,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $conditionnalBa = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -42,7 +42,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $conditionalTara = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -50,7 +50,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $imperative = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -58,7 +58,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $volitionnal = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -66,7 +66,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $causative = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -74,7 +74,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $potential = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,
@@ -82,7 +82,7 @@ class FlashcardConjugation extends Flashcard
     )]
     private ?string $teForm = null;
 
-    #[ORM\Column(length: 30)]
+    #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 30,

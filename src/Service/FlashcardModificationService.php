@@ -9,82 +9,90 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
+use App\Entity\FlashcardModification;
 use App\Entity\FlashcardVocabulary;
+use App\Entity\User;
 use App\Repository\FlashcardModificationRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class FlashcardModificationService
 {
     private $serializerService;
     private $flashcardModificationRepository;
+    private $em;
+    private $validator;
 
     public function __construct(
         SerializerService $serializerService,
-        FlashcardModificationRepository $flashcardModificationRepository
+        FlashcardModificationRepository $flashcardModificationRepository,
+        EntityManagerInterface $em,
+        ValidatorInterface $validator
     ) {
         $this->serializerService = $serializerService;
         $this->flashcardModificationRepository = $flashcardModificationRepository;
+        $this->em = $em;
+        $this->validator = $validator;
     }
 
-    public function setFlashcardModificationData(Flashcard $flashcard, array $data)
-    {
-        $modif = [];
+    /**
+     * Undocumented function
+     *
+     * @param Flashcard $flashcard
+     * @param Deck $deck
+     * @param array $data
+     * @return FlashcardModification
+     */
+    public function setFlashcardModificationData(
+        Flashcard $flashcard,
+        Deck $deck,
+        array $data,
+        User $user,
+    ): FlashcardModification {
+        $flashcardModif = $this->flashcardModificationRepository->findOneBy(
+            ['deck' => $deck->getId(), 'flashcard' => $flashcard->getId()]
+        );
+        $new = false;
+        if(!$flashcardModif) {
+            $flashcardModif = new FlashcardModification();
+            $flashcardModif->setDeck($deck);
+            $flashcardModif->setUser($user);
+            $flashcardModif->setFlashcard($flashcard);
+            $new = true;
+        }
+
         if (isset($data['translation'])) {
-            $modif['translation'] = $data['translation'];
+            $flashcardModif->setTranslation($data['translation']);
         }
         if (isset($data['furigana'])) {
-            $modif['furigana'] = $data['furigana'];
+            $flashcardModif->setFurigana($data['furigana']);
         }
         if (isset($data['example'])) {
-            $modif['example'] = $data['example'];
+            $flashcardModif->setExample($data['example']);
         }
 
         switch (true) {
             case $flashcard instanceof FlashcardGrammar:
-                if (isset($data['grammarPoint'])) {
-                    $modif['grammarPoint'] = $data['grammarPoint'];
-                }
-                if (isset($data['grammarRule'])) {
-                    $modif['grammarRule'] = $data['grammarRule'];
-                }
+                $this->setModifGrammar($data, $flashcardModif);
                 break;
             case $flashcard instanceof FlashcardKanji:
-                if (isset($data['onyomi'])) {
-                    $modif['onyomi'] = $data['onyomi'];
-                }
-                if (isset($data['kunyomi'])) {
-                    $modif['kunyomi'] = $data['kunyomi'];
-                }
-                if (isset($data['kanji'])) {
-                    $modif['kanji'] = $data['kanji'];
-                }
+                $this->setModifKanji($data, $flashcardModif);
                 break;
             case $flashcard instanceof FlashcardConjugation:
-                if (isset($data['polite'])) {
-                    $modif['polite'] = $data['polite'];
-                }
-                if (isset($data['negative'])) {
-                    $modif['negative'] = $data['negative'];
-                }
-                if (isset($data['causative'])) {
-                    $modif['causative'] = $data['causative'];
-                }
+                $this->setModifConjugation($data, $flashcardModif);
                 break;
             case $flashcard instanceof FlashcardVocabulary:
-                if (isset($data['word'])) {
-                    $modif['word'] = $data['word'];
-                }
-                if (isset($data['image'])) {
-                    $modif['image'] = $data['image'];
-                }
-                if (isset($data['audio'])) {
-                    $modif['audio'] = $data['audio'];
-                }
+                $this->setModifVocabulary($data, $flashcardModif);
                 break;
             default:
                 throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requête invalide');
         }
 
-        return $modif;
+        if($new) {
+            $this->em->persist($flashcardModif);
+        }
+
+        return $flashcardModif;
     }
 
     public function getFlashcardModification(array $flashcard, Deck $deck): array
@@ -107,6 +115,76 @@ class FlashcardModificationService
         }
 
         return $flashcard;
+    }
+
+    /**
+    * Valide les données d'une carte
+    *
+    * @param Flashcard $flashcard
+    * @param ValidatorInterface $validator
+    * @throws HttpException si les données sont invalides
+    * @return void
+    */
+    public function validateFlashcardModification(FlashcardModification $flashcardModif)
+    {
+        $errors = $this->validator->validate($flashcardModif, null);
+
+        if (count($errors) > 0) {
+            $errorsMessage = [];
+            foreach ($errors as $error) {
+                $errorsMessage[] = $error->getMessage();
+            }
+            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsMessage));
+        }
+    }
+
+    private function setModifGrammar(array $data, FlashcardModification $flashcardModif)
+    {
+        if (isset($data['grammarPoint'])) {
+            $flashcardModif->setGrammarPoint($data['translation']);
+        }
+        if (isset($data['grammarRule'])) {
+            $flashcardModif->setGrammarRule($data['grammarRule']);
+        }
+    }
+
+    private function setModifKanji(array $data, FlashcardModification $flashcardModif)
+    {
+        if (isset($data['onyomi'])) {
+            $flashcardModif->setOnyomi($data['onyomi']);
+        }
+        if (isset($data['kunyomi'])) {
+            $flashcardModif->setKunyomi($data['kunyomi']);
+        }
+        if (isset($data['kanji'])) {
+            $flashcardModif->setKanji($data['kanji']);
+        }
+    }
+
+    private function setModifConjugation(array $data, FlashcardModification $flashcardModif)
+    {
+        if (isset($data['polite'])) {
+            $flashcardModif->setPolite($data['polite']);
+        }
+        if (isset($data['negative'])) {
+            $flashcardModif->setNegative($data['negative']);
+        }
+        if (isset($data['causative'])) {
+            $flashcardModif->setCausative($data['causative']);
+        }
+    }
+
+    private function setModifVocabulary(array $data, FlashcardModification $flashcardModif)
+    {
+        if (isset($data['word'])) {
+            $flashcardModif->setWord($data['word']);
+        }
+        if (isset($data['image'])) {
+            $flashcardModif->setImage($data['image']);
+        }
+        if (isset($data['audio'])) {
+            $flashcardModif->setAudio($data['audio']);
+        }
     }
 
 }

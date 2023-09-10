@@ -16,7 +16,6 @@ class FlashcardModification
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
-    // #[Groups(["getDetailDeck"])]
     private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
@@ -28,86 +27,170 @@ class FlashcardModification
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'traduction' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $translation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'furigana' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $furigana = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'exemple' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $example = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $polite = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme negative' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $negative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme conditionnelle en Ba' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $conditionnalBa = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme conditionnelle en Tara' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $conditionnalTara = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme imperative' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $imperative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme volitionnelle' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $volitional = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $causative = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme potentielle' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $potential = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme en te' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $teForm = null;
 
     #[ORM\Column(length: 30, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 30,
+        maxMessage: "Le champ 'forme en ta' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $taForm = null;
 
     #[ORM\Column(length: 60, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 60,
+        maxMessage: "Le champ 'onyomi' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $onyomi = null;
 
     #[ORM\Column(length: 60, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 60,
+        maxMessage: "Le champ 'kunyomi' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $kunyomi = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: "Le champ 'kanji' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $kanji = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups([ "getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $grammarPoint = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'règle de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $grammarRule = null;
 
     #[ORM\Column(length: 10, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: "Le champ 'mot' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $word = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'image' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'audio' ne peut pas faire plus de {{ limit }} caractères",
+    )]
     private ?string $audio = null;
 
     public function getId(): ?int
