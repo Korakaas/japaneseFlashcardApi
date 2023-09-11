@@ -10,6 +10,7 @@ use App\Service\DeckService;
 use App\Service\FlashcardModificationService;
 use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,13 +52,22 @@ class DeckController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/decks', name: 'decks', methods: ['GET'])]
-    public function getDeckList(): JsonResponse
+    public function getDeckList(Request $request, PaginatorInterface $paginator): JsonResponse
     {
-        $deckList = $this->deckRepository->findBy(['public' => true]);
-        $deckNames = array_map(fn ($deck) => $deck->getName(), $deckList);
+
+        $pagination = $paginator->paginate(
+            $this->deckRepository->paginationquery(),
+            $request->get('page', 1),
+            $request->get('limit', 9),
+        );
+        $pagination->getTotalItemCount();
 
         return $this->json(
-            $deckNames,
+            [
+                'data' => $pagination->getItems(),
+                'page' => $pagination->getCurrentPageNumber(),
+                'total_items' => $pagination->getTotalItemCount(),
+            ],
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );

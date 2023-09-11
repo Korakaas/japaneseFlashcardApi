@@ -47,15 +47,22 @@ class DeckRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-
-    public function getExempleDeck($deckId): ?array
+    public function paginationquery()
     {
         return $this->createQueryBuilder('d')
-             ->select('d.name', 'd.public', 'd.reverse', 'd.description', 'd.createdAt', 'd.updatedAt')
-            ->andWhere('d.id = :deckId')
-            ->setParameter('deckId', $deckId)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->select('d.id', 'd.name')
+            ->where('d.public = 1')
+            ->getQuery();
     }
+
+    // public function getExempleDeck($deckId): ?array
+    // {
+    //     return $this->createQueryBuilder('d')
+    //          ->select('d.name', 'd.public', 'd.reverse', 'd.description', 'd.createdAt', 'd.updatedAt')
+    //         ->andWhere('d.id = :deckId')
+    //         ->setParameter('deckId', $deckId)
+    //         ->getQuery()
+    //         ->getOneOrNullResult()
+    //     ;
+    // }
 }
