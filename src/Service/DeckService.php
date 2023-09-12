@@ -34,7 +34,7 @@ class DeckService
             foreach ($errors as $error) {
                 $errorsMessage[] = $error->getMessage();
             }
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsMessage));
+            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsMessage, JSON_UNESCAPED_UNICODE));
         }
     }
 

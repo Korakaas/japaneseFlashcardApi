@@ -219,8 +219,8 @@ class DeckController extends AbstractController
         $this->em->flush();
 
         return $this->json(
-            null,
-            Response::HTTP_NO_CONTENT,
+            'Le paquet a bien été supprimé',
+            Response::HTTP_OK,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
 
@@ -314,8 +314,8 @@ class DeckController extends AbstractController
 
         $deckArray = $deckToUpdate->toArray();
 
-        return new JsonResponse(
-            $deckArray,
+        return $this->json(
+            'Le paquet a bien été modifié',
             JsonResponse::HTTP_OK,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
