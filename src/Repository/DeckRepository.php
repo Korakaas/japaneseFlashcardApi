@@ -55,6 +55,15 @@ class DeckRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    public function paginationqueryUser($user)
+    {
+        return $this->createQueryBuilder('d')
+            ->select('d.id', 'd.name')
+            ->where('d.user = :user')
+            ->setParameter('user', $user)
+            ->getQuery();
+    }
+
     // public function getExempleDeck($deckId): ?array
     // {
     //     return $this->createQueryBuilder('d')

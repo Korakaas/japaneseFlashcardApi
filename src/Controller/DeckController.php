@@ -64,7 +64,7 @@ class DeckController extends AbstractController
 
         return $this->json(
             [
-                'data' => $pagination->getItems(),
+                'decks' => $pagination->getItems(),
                 'page' => $pagination->getCurrentPageNumber(),
                 'total_items' => $pagination->getTotalItemCount(),
             ],
@@ -118,7 +118,7 @@ class DeckController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/user/decks', name: 'userDecks', methods: ['GET'])]
-    public function getUserDecks(): JsonResponse
+    public function getUserDecks(Request $request, PaginatorInterface $paginator): JsonResponse
     {
         /**
          * @var User
@@ -127,11 +127,19 @@ class DeckController extends AbstractController
         //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
-        $deckList = $this->deckRepository->findBy(['user' => $user->getId()]);
-        $deckNames = array_map(fn ($deck) => $deck->getName(), $deckList);
+        $pagination = $paginator->paginate(
+            $this->deckRepository->paginationqueryUser($user),
+            $request->get('page', 1),
+            $request->get('limit', 9),
+        );
+        $pagination->getTotalItemCount();
 
         return $this->json(
-            $deckNames,
+            [
+                'decks' => $pagination->getItems(),
+                'page' => $pagination->getCurrentPageNumber(),
+                'total_items' => $pagination->getTotalItemCount(),
+            ],
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
