@@ -176,6 +176,22 @@ class FlashcardService
         $this->em->flush();
     }
 
+    // Fonction pour déterminer le type de flashcard
+    public function getFlashcardType($flashcardToReturn)
+    {
+        if ($flashcardToReturn instanceof FlashcardKanji) {
+            return 'kanji';
+        } elseif ($flashcardToReturn instanceof FlashcardGrammar) {
+            return 'grammar';
+        } elseif ($flashcardToReturn instanceof FlashcardVocabulary) {
+            return 'vocabulary';
+        } elseif ($flashcardToReturn instanceof FlashcardConjugation) {
+            return 'conjugation';
+        }
+
+        return 'unknown';
+    }
+
     private function setModifGrammar(array $data, FlashcardGrammar $flashcard)
     {
         if (isset($data['grammarPoint'])) {

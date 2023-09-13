@@ -58,7 +58,7 @@ class DeckController extends AbstractController
         $pagination = $paginator->paginate(
             $this->deckRepository->paginationquery(),
             $request->get('page', 1),
-            $request->get('limit', 9),
+            $request->get('limit', 100),
         );
         $pagination->getTotalItemCount();
 
@@ -349,7 +349,7 @@ class DeckController extends AbstractController
 
         $newDeck->setName($deckToCopy->getName());
         $newDeck->setDescription($deckToCopy->getDescription());
-        $newDeck->setPublic($deckToCopy->isPublic());
+        $newDeck->setPublic(false);
         $newDeck->setReverse($deckToCopy->isReverse());
         $newDeck->setUser($user);
 

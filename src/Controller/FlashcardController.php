@@ -12,12 +12,14 @@ use App\Entity\FlashcardVocabulary;
 use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Repository\FlashcardModificationRepository;
+use App\Repository\FlashcardRepository;
 use App\Repository\ReviewRepository;
 use App\Service\AccessService;
 use App\Service\FlashcardModificationService;
 use App\Service\FlashcardService;
 use App\Service\SerializerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,8 +33,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 #[Route("/api", "api_")]
 class FlashcardController extends AbstractController
 {
-    private $flashcardModificationRepository;
     private $deckRepository;
+    private $flashcardRepository;
     private $em;
     private $accessService;
     private $flashcardService;
@@ -41,16 +43,16 @@ class FlashcardController extends AbstractController
 
 
     public function __construct(
-        FlashcardModificationRepository $flashcardModificationRepository,
         DeckRepository $deckRepository,
+        FlashcardRepository $flashcardRepository,
         AccessService $accessService,
         FlashcardService $flashcardService,
         FlashcardModificationService $flashcardModificationService,
         SerializerInterface $serializer,
         EntityManagerInterface $em
     ) {
-        $this->flashcardModificationRepository = $flashcardModificationRepository;
         $this->deckRepository = $deckRepository;
+        $this->flashcardRepository = $flashcardRepository;
         $this->em = $em;
         $this->accessService = $accessService;
         $this->flashcardService = $flashcardService;
@@ -64,12 +66,21 @@ class FlashcardController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/decks/{id}/flashcards', name: 'flashcards', methods: ['GET'])]
-    public function getFlashcardList(Deck $deck): JsonResponse
+    public function getFlashcardList(Request $request, PaginatorInterface $paginator): JsonResponse
     {
-        $flashcardList = $deck->getFlashcards()->toArray();
-        $flashcardNames = array_map(fn ($flashcard) => $flashcard->getTranslation(), $flashcardList);
+        $pagination = $paginator->paginate(
+            $this->deckRepository->paginationquery($request->get('id')),
+            $request->get('page', 1),
+            $request->get('limit', 100),
+        );
+        $pagination->getTotalItemCount();
+
         return $this->json(
-            $flashcardNames,
+            [
+                'flashcards' => $pagination->getItems(),
+                'page' => $pagination->getCurrentPageNumber(),
+                'total_items' => $pagination->getTotalItemCount(),
+            ],
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
@@ -115,7 +126,7 @@ class FlashcardController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/user/decks/{id}/flashcards', name: 'userFlashcards', methods: ['GET'])]
-    public function getUserFlashcards(Deck $deck): JsonResponse
+    public function getUserFlashcards(Request $request, PaginatorInterface $paginator): JsonResponse
     {
         /**
          * @var User
@@ -124,13 +135,24 @@ class FlashcardController extends AbstractController
         //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
         //Vérifie que le paquet appartient bien à l'utilisateur
+        $deckId = $request->get('id');
+        $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
         $this->accessService->checkDeckAccess($deck, $user);
+        // dd($deckId, $user->getId());
 
-        $flashcardList = $deck->getFlashcards()->toArray();
-        $flashcardNames = array_map(fn ($flashcard) => $flashcard->getTranslation(), $flashcardList);
+        $pagination = $paginator->paginate(
+            $this->flashcardRepository->paginationquery($deckId, $user->getId()),
+            $request->get('page', 1),
+            $request->get('limit', 100),
+        );
+        $pagination->getTotalItemCount();
 
-        return  new JsonResponse(
-            $flashcardNames,
+        return $this->json(
+            [
+                'flashcards' => $pagination->getItems(),
+                'page' => $pagination->getCurrentPageNumber(),
+                'total_items' => $pagination->getTotalItemCount(),
+            ],
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
@@ -162,14 +184,20 @@ class FlashcardController extends AbstractController
         //Vérifie que le paquet appartient bien à l'utilisateur
         $this->accessService->checkDeckAccess($deck, $user);
 
+        //Verifie que la carte appartient bien au paquet
         $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
-        $flashcardToReturn = $flashcardToReturn->toArray();
+
+        //récupère le type de la carte
+        $flashcardType = $this->flashcardService->getFlashcardType($flashcardToReturn);
+
 
         //récupère les modifications liées au deck de la carte
         $flashcardToReturn = $this->flashcardModificationService->getFlashcardModification(
-            $flashcardToReturn,
+            $flashcardToReturn->toArray(),
             $deck
         );
+        $flashcardToReturn['type'] = $flashcardType;
+
 
         return new JsonResponse(
             $flashcardToReturn,
@@ -260,6 +288,7 @@ class FlashcardController extends AbstractController
         }
 
         $flashcard->addDeck($deck);
+        $flashcard->addUser($user);
 
         //Vérifie que les données sont valides
         $this->flashcardService->validateFlashcard($flashcard);
@@ -317,9 +346,7 @@ class FlashcardController extends AbstractController
 
         $this->em->flush();
 
-        $flashcardArray = $flashcardToUpdate->toArray();
-
-        return new JsonResponse($flashcardArray, JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse('La carte a bien été modifée', JsonResponse::HTTP_OK);
 
     }
 

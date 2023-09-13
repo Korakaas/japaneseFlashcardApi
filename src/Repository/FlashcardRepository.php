@@ -5,8 +5,10 @@ namespace App\Repository;
 use App\Entity\Deck;
 use App\Entity\Flashcard;
 use App\Entity\Review;
+use App\Entity\User;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 use PhpParser\Node\Expr\Cast\Array_;
@@ -40,6 +42,18 @@ class FlashcardRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
+    public function paginationquery(int $deckId, int $userId): Query
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f.id', 'f.translation')
+            ->join('f.decks', 'd')
+            ->join('f.user', 'u')
+            ->andWhere('d.id = :deckId')
+            ->andWhere('u.id = :userId')
+            ->setParameter('deckId', $deckId)
+            ->setParameter('userId', $userId)
+            ->getQuery();
+    }
 
     /**
      * Undocumented function
