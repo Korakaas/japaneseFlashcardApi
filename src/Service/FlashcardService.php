@@ -73,14 +73,15 @@ class FlashcardService
     public function findFlashcardToreview(int $deckId, int $userId): array
     {
         $today = new DateTime(date('Y-m-d'));
-        $flashcard = $this->flashcardRepository->findByToReview($deckId, $userId, $today);
-        if (!$flashcard) {
+        $result = $this->flashcardRepository->findByToReview($deckId, $userId, $today);
+        // dd($result);
+        if (!$result['totalCardCount']) {
             throw new HttpException(
                 Response::HTTP_NOT_FOUND,
                 'Pas de carte à réviser aujourd\'hui'
             );
         }
-        return $flashcard;
+        return $result;
     }
 
     public function updateFlashcardProperties(Flashcard $flashcardToUpdate, array $data)
@@ -179,8 +180,13 @@ class FlashcardService
         $this->em->flush();
     }
 
-    // Fonction pour déterminer le type de flashcard
-    public function getFlashcardType($flashcardToReturn)
+    /**
+     * Détermine le type de la carte
+     *
+     * @param [type] $flashcardToReturn
+     * @return string
+     */
+    public function getFlashcardType($flashcardToReturn):string
     {
         if ($flashcardToReturn instanceof FlashcardKanji) {
             return 'kanji';

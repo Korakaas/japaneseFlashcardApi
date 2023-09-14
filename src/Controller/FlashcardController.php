@@ -74,7 +74,7 @@ class FlashcardController extends AbstractController
             $request->get('limit', 100),
         );
         $pagination->getTotalItemCount();
-
+dd($this->deckRepository->paginationquery($request->get('id')));
         return $this->json(
             [
                 'flashcards' => $pagination->getItems(),
@@ -146,7 +146,6 @@ class FlashcardController extends AbstractController
             $request->get('limit', 100),
         );
         $pagination->getTotalItemCount();
-
         return $this->json(
             [
                 'flashcards' => $pagination->getItems(),
@@ -290,7 +289,7 @@ class FlashcardController extends AbstractController
         }
         if($reverse)
         {
-            $flashcardBack = clone($flashcard);
+            $flashcardBack = clone $flashcard;
             $flashcardBack->setFront($flashcard->getBack());
             $flashcardBack->setBack($flashcard->getFront());
 
@@ -374,7 +373,6 @@ class FlashcardController extends AbstractController
     #[Route('/user/decks/{deckId}/test', name: "testFlashcard", methods:['GET'])]
     public function getFlashcardForTest(
         Request $request,
-        SerializerService $serializerService
     ): JsonResponse {
         /**
          * @var User
@@ -389,13 +387,16 @@ class FlashcardController extends AbstractController
         //Vérifie que le paquet appartient bien à l'utilisateur
         $this->accessService->checkDeckAccess($deck, $user);
 
-        //Récupère un maximum de 20 cartes dont la date de revue est supérieur à celle du jour
-        $flaschardToReviewArray = $this->flashcardService->findFlashcardToreview(
+        //Récupère les cartes dont la date de révision est supérieur à celle du jour
+        $toReview = $this->flashcardService->findFlashcardToreview(
             $deckId,
             $user->getId()
         );
-
+        $flaschardToReviewArray = $toReview['cards'];
+        $sumFlashcards = $toReview['totalCardCount'];
         $flaschardToReview = $flaschardToReviewArray[array_rand($flaschardToReviewArray)];
+
+        $flashcardType = $this->flashcardService->getFlashcardType($flaschardToReview);
 
         //récupère les modifications liées au deck de la carte
         $flaschardToReview = $flaschardToReview->toArray();
@@ -404,8 +405,14 @@ class FlashcardController extends AbstractController
             $deck
         );
 
+        $flashcardToReturn['type'] = $flashcardType;
+
+        $result =[
+            'cards'=> $flaschardToReview, 
+            'totalCardCount' => $sumFlashcards];
+        // dd($result);
         return new JsonResponse(
-            $flaschardToReview,
+            $result,
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );

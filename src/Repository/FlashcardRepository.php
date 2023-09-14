@@ -45,11 +45,13 @@ class FlashcardRepository extends ServiceEntityRepository
     public function paginationquery(int $deckId, int $userId): Query
     {
         return $this->createQueryBuilder('f')
-            ->select('f.id', 'f.front')
+            ->select('f.id', 'f.front', 'r.intervalReview', 'r.reviewedAt', 'r.knownLevel')
             ->join('f.decks', 'd')
             ->join('f.user', 'u')
+            ->join('f.reviews', 'r')
             ->andWhere('d.id = :deckId')
             ->andWhere('u.id = :userId')
+            ->andWhere('r.user = :userId')
             ->setParameter('deckId', $deckId)
             ->setParameter('userId', $userId)
             ->getQuery();
@@ -104,18 +106,33 @@ class FlashcardRepository extends ServiceEntityRepository
      */
     public function findByToReview(int $deckId, int $userId, DateTime $todayDate, $limit = 20): ?array
     {
-        return $this->createQueryBuilder('f')
+        $qb = $this->createQueryBuilder('f');
+        $cards = $qb
+        ->select('f')
         ->innerJoin('f.decks', 'd')
         ->innerJoin('f.user', 'u')
         ->leftJoin('f.reviews', 'r') // Utilisation d'une jointure gauche (left join) pour les avis
         ->where('u.id = :userId')
         ->andWhere('d.id = :deckId')
         ->andWhere("((r.reviewedAt IS NULL) OR (DATE_ADD(r.reviewedAt, r.intervalReview, 'DAY') < :todayDate))")
+        ->andWhere("(r.user = :userId) OR (r.user IS NULL) ")
+        ->setMaxResults($limit)
         ->setParameter('deckId', $deckId)
         ->setParameter('userId', $userId)
         ->setParameter('todayDate', $todayDate)
-        ->setMaxResults($limit)
         ->getQuery()
         ->getResult();
+
+        // Requête pour obtenir la somme du nombre de cartes
+        $totalCardCount = $qb
+        ->select('SUM(1) as totalCardCount')
+        ->getQuery()
+        ->getSingleScalarResult();
+        return [
+            'cards' => $cards,
+            'totalCardCount' => $totalCardCount,
+        ];
     }
+
+
 }

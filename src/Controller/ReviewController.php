@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Flashcard;
 use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Repository\ReviewRepository;
@@ -76,7 +77,7 @@ class ReviewController extends AbstractController
         $this->reviewService->updateReview($score, $flashcardReviewed, $review, $user);
 
         return new JsonResponse(
-            [],
+            'Les résultats ont bien été enregistrées',
             Response::HTTP_NO_CONTENT,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
