@@ -302,9 +302,6 @@ class DeckController extends AbstractController
         if (isset($data['public'])) {
             $deckToUpdate->setPublic($data['public']);
         }
-        if (isset($data['reverse'])) {
-            $deckToUpdate->setReverse($data['reverse']);
-        }
 
         //validation des données
         $this->deckService->validateDeck($deckToUpdate);
@@ -350,7 +347,6 @@ class DeckController extends AbstractController
         $newDeck->setName($deckToCopy->getName());
         $newDeck->setDescription($deckToCopy->getDescription());
         $newDeck->setPublic(false);
-        $newDeck->setReverse($deckToCopy->isReverse());
         $newDeck->setUser($user);
 
         $flaschards = $deckToCopy->getFlashcards();

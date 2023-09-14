@@ -61,8 +61,11 @@ class FlashcardModificationService
             $new = true;
         }
 
-        if (isset($data['translation'])) {
-            $flashcardModif->setTranslation($data['translation']);
+        if (isset($data['front'])) {
+            $flashcardModif->setFront($data['front']);
+        }
+        if (isset($data['back'])) {
+            $flashcardModif->setBack($data['back']);
         }
         if (isset($data['furigana'])) {
             $flashcardModif->setFurigana($data['furigana']);
@@ -78,9 +81,9 @@ class FlashcardModificationService
             case $flashcard instanceof FlashcardKanji:
                 $this->setModifKanji($data, $flashcardModif);
                 break;
-            case $flashcard instanceof FlashcardConjugation:
-                $this->setModifConjugation($data, $flashcardModif);
-                break;
+                // case $flashcard instanceof FlashcardConjugation:
+                //     $this->setModifConjugation($data, $flashcardModif);
+                //     break;
             case $flashcard instanceof FlashcardVocabulary:
                 $this->setModifVocabulary($data, $flashcardModif);
                 break;
@@ -140,11 +143,11 @@ class FlashcardModificationService
 
     private function setModifGrammar(array $data, FlashcardModification $flashcardModif)
     {
-        if (isset($data['grammarPoint'])) {
-            $flashcardModif->setGrammarPoint($data['translation']);
+        if (isset($data['grammarConstruction'])) {
+            $flashcardModif->setConstruction($data['grammarConstruction']);
         }
-        if (isset($data['grammarRule'])) {
-            $flashcardModif->setGrammarRule($data['grammarRule']);
+        if (isset($data['grammarNotes'])) {
+            $flashcardModif->setGrammarnotes($data['grammarNotes']);
         }
     }
 
@@ -156,29 +159,26 @@ class FlashcardModificationService
         if (isset($data['kunyomi'])) {
             $flashcardModif->setKunyomi($data['kunyomi']);
         }
-        if (isset($data['kanji'])) {
-            $flashcardModif->setKanji($data['kanji']);
+        if (isset($data['mnemotic'])) {
+            $flashcardModif->setMnemotic($data['mnemotic']);
         }
     }
 
-    private function setModifConjugation(array $data, FlashcardModification $flashcardModif)
-    {
-        if (isset($data['polite'])) {
-            $flashcardModif->setPolite($data['polite']);
-        }
-        if (isset($data['negative'])) {
-            $flashcardModif->setNegative($data['negative']);
-        }
-        if (isset($data['causative'])) {
-            $flashcardModif->setCausative($data['causative']);
-        }
-    }
+    // private function setModifConjugation(array $data, FlashcardModification $flashcardModif)
+    // {
+    //     if (isset($data['polite'])) {
+    //         $flashcardModif->setPolite($data['polite']);
+    //     }
+    //     if (isset($data['negative'])) {
+    //         $flashcardModif->setNegative($data['negative']);
+    //     }
+    //     if (isset($data['causative'])) {
+    //         $flashcardModif->setCausative($data['causative']);
+    //     }
+    // }
 
     private function setModifVocabulary(array $data, FlashcardModification $flashcardModif)
     {
-        if (isset($data['word'])) {
-            $flashcardModif->setWord($data['word']);
-        }
         if (isset($data['image'])) {
             $flashcardModif->setImage($data['image']);
         }

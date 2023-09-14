@@ -33,15 +33,6 @@ class Flashcard
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\NotBlank(message: "La traduction est obligatoire")]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le traduction ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $translation = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
@@ -78,6 +69,33 @@ class Flashcard
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'flashcards')]
     private Collection $user;
 
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $side = null;
+
+    #[ORM\OneToOne(inversedBy: 'flashcard', targetEntity: self::class, cascade: ['persist', 'remove'])]
+    private ?self $flashcard = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $reverse = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\NotBlank(message: "La recto est obligatoire")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le recto ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $front = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Assert\NotBlank(message: "La verso est obligatoire")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le verso ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $back = null;
+
     public function __construct()
     {
         $this->decks = new ArrayCollection();
@@ -101,18 +119,6 @@ class Flashcard
     public function setCreatedAt(): self
     {
         $this->createdAt = new DateTimeImmutable('now');
-
-        return $this;
-    }
-
-    public function getTranslation(): ?string
-    {
-        return $this->translation;
-    }
-
-    public function setTranslation(string $translation): static
-    {
-        $this->translation = $translation;
 
         return $this;
     }
@@ -255,7 +261,8 @@ class Flashcard
     {
         $data =  [
             'id' => $this->id,
-            'translation' => $this->translation,
+            'front' => $this->front,
+            'back' => $this->back,
             'furigana' => $this->furigana,
             'example' => $this->example,
             'createdAt' => $this->createdAt,
@@ -265,30 +272,30 @@ class Flashcard
         if ($this instanceof FlashcardKanji) {
             $data['onyomi'] = $this->getOnyomi();
             $data['kunyomi'] = $this->getKunyomi();
-            $data['kanji'] = $this->getKanji();
+            $data['mnemotic'] = $this->getMnemonic();
         }
         if ($this instanceof FlashcardGrammar) {
-            $data['grammarRule'] = $this->getGrammarRule();
-            $data['grammarPoint'] = $this->getGrammarPoint();
+            $data['grammarConstruction'] = $this->getConstruction();
+            $data['grammarNotes'] = $this->getGrammarnotes();
         }
         if ($this instanceof FlashcardVocabulary) {
-            $data['word'] = $this->getWord();
             $data['image'] = $this->getImage();
             $data['audio'] = $this->getAudio();
         }
-        if ($this instanceof FlashcardConjugation) {
-            $data['polite'] = $this->getPolite();
-            $data['negative'] = $this->getNegative();
-            $data['conditionnalBa'] = $this->getConditionnalBa();
-            $data['conditionalTara'] = $this->getConditionalTara();
-            $data['imperative'] = $this->getImperative();
-            $data['volitionnal'] = $this->getVolitionnal();
-            $data['causative'] = $this->getCausative();
-            $data['potential'] = $this->getPotential();
-            $data['taForm'] = $this->getTaForm();
-            $data['teForm'] = $this->getTeForm();
+        // if ($this instanceof FlashcardConjugation) {
+        //     $data['dictionnary'] = $this->getDictionnary();
+        //     $data['polite'] = $this->getPolite();
+        //     $data['negative'] = $this->getNegative();
+        //     $data['conditionnalBa'] = $this->getConditionnalBa();
+        //     $data['conditionnalTara'] = $this->getConditionnalTara();
+        //     $data['imperative'] = $this->getImperative();
+        //     $data['volitional'] = $this->getVolitional();
+        //     $data['causative'] = $this->getCausative();
+        //     $data['potential'] = $this->getPotential();
+        //     $data['taForm'] = $this->getTaForm();
+        //     $data['teForm'] = $this->getTeForm();
 
-        }
+        // }
 
         return $data;
 
@@ -314,6 +321,66 @@ class Flashcard
     public function removeUser(User $user): static
     {
         $this->user->removeElement($user);
+
+        return $this;
+    }
+
+    public function getSide(): ?string
+    {
+        return $this->side;
+    }
+
+    public function setSide(?string $side): static
+    {
+        $this->side = $side;
+
+        return $this;
+    }
+
+    public function getFlashcard(): ?self
+    {
+        return $this->flashcard;
+    }
+
+    public function setFlashcard(?self $flashcard): static
+    {
+        $this->flashcard = $flashcard;
+
+        return $this;
+    }
+
+    public function isReverse(): ?bool
+    {
+        return $this->reverse;
+    }
+
+    public function setReverse(?bool $reverse): static
+    {
+        $this->reverse = $reverse;
+
+        return $this;
+    }
+
+    public function getFront(): ?string
+    {
+        return $this->front;
+    }
+
+    public function setFront(string $front): static
+    {
+        $this->front = $front;
+
+        return $this;
+    }
+
+    public function getBack(): ?string
+    {
+        return $this->back;
+    }
+
+    public function setBack(string $back): static
+    {
+        $this->back = $back;
 
         return $this;
     }

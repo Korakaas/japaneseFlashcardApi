@@ -63,15 +63,4 @@ class DeckRepository extends ServiceEntityRepository
             ->setParameter('user', $user)
             ->getQuery();
     }
-
-    // public function getExempleDeck($deckId): ?array
-    // {
-    //     return $this->createQueryBuilder('d')
-    //          ->select('d.name', 'd.public', 'd.reverse', 'd.description', 'd.createdAt', 'd.updatedAt')
-    //         ->andWhere('d.id = :deckId')
-    //         ->setParameter('deckId', $deckId)
-    //         ->getQuery()
-    //         ->getOneOrNullResult()
-    //     ;
-    // }
 }

@@ -26,12 +26,14 @@ class FlashcardKanji extends Flashcard
     )]
     private ?string $kunyomi = null;
 
-    #[ORM\Column(length: 10)]
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
-        max: 10,
-        maxMessage: "Le champ 'kanji' ne peut pas faire plus de {{ limit }} caractères",
+        max: 60,
+        maxMessage: "Le champ 'moyen mnémotechniques' ne peut pas faire plus de {{ limit }} caractères",
     )]
-    private ?string $Kanji = null;
+    private ?string $mnemonic = null;
 
     public function getOnyomi(): ?string
     {
@@ -57,14 +59,14 @@ class FlashcardKanji extends Flashcard
         return $this;
     }
 
-    public function getKanji(): ?string
+    public function getMnemonic(): ?string
     {
-        return $this->Kanji;
+        return $this->mnemonic;
     }
 
-    public function setKanji(string $Kanji): static
+    public function setMnemonic(?string $mnemonic): static
     {
-        $this->Kanji = $Kanji;
+        $this->mnemonic = $mnemonic;
 
         return $this;
     }

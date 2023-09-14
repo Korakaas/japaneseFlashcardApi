@@ -25,13 +25,6 @@ class FlashcardModification
     #[ORM\JoinColumn(nullable: false)]
     private ?Deck $deck = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le champ 'traduction' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $translation = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
@@ -49,85 +42,6 @@ class FlashcardModification
     )]
     private ?string $example = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $polite = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme negative' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $negative = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme conditionnelle en Ba' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $conditionnalBa = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme conditionnelle en Tara' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $conditionnalTara = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme imperative' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $imperative = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme volitionnelle' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $volitional = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $causative = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme potentielle' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $potential = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme en te' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $teForm = null;
-
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme en ta' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $taForm = null;
 
     #[ORM\Column(length: 60, nullable: true)]
     #[Groups(["getFlashcardModif"])]
@@ -145,38 +59,6 @@ class FlashcardModification
     )]
     private ?string $kunyomi = null;
 
-    #[ORM\Column(length: 10, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 10,
-        maxMessage: "Le champ 'kanji' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $kanji = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups([ "getFlashcardModif"])]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le champ 'point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $grammarPoint = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le champ 'règle de grammaire' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $grammarRule = null;
-
-    #[ORM\Column(length: 10, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 10,
-        maxMessage: "Le champ 'mot' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $word = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getFlashcardModif"])]
     #[Assert\Length(
@@ -192,6 +74,46 @@ class FlashcardModification
         maxMessage: "Le champ 'audio' ne peut pas faire plus de {{ limit }} caractères",
     )]
     private ?string $audio = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'recto' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $front = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'verso' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $back = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'moyen mnemotechnique' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $mnemotic = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'construction du point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $construction = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(["getFlashcardModif"])]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'notes de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    private ?string $grammarnotes = null;
 
     public function getId(): ?int
     {
@@ -234,18 +156,6 @@ class FlashcardModification
         return $this;
     }
 
-    public function getTranslation(): ?string
-    {
-        return $this->translation;
-    }
-
-    public function setTranslation(?string $translation): static
-    {
-        $this->translation = $translation;
-
-        return $this;
-    }
-
     public function getFurigana(): ?string
     {
         return $this->furigana;
@@ -266,126 +176,6 @@ class FlashcardModification
     public function setExample(?string $example): static
     {
         $this->example = $example;
-
-        return $this;
-    }
-
-    public function getPolite(): ?string
-    {
-        return $this->polite;
-    }
-
-    public function setPolite(?string $polite): static
-    {
-        $this->polite = $polite;
-
-        return $this;
-    }
-
-    public function getNegative(): ?string
-    {
-        return $this->negative;
-    }
-
-    public function setNegative(?string $negative): static
-    {
-        $this->negative = $negative;
-
-        return $this;
-    }
-
-    public function getConditionnalBa(): ?string
-    {
-        return $this->conditionnalBa;
-    }
-
-    public function setConditionnalBa(?string $conditionnalBa): static
-    {
-        $this->conditionnalBa = $conditionnalBa;
-
-        return $this;
-    }
-
-    public function getConditionnalTara(): ?string
-    {
-        return $this->conditionnalTara;
-    }
-
-    public function setConditionnalTara(?string $conditionnalTara): static
-    {
-        $this->conditionnalTara = $conditionnalTara;
-
-        return $this;
-    }
-
-    public function getImperative(): ?string
-    {
-        return $this->imperative;
-    }
-
-    public function setImperative(?string $imperative): static
-    {
-        $this->imperative = $imperative;
-
-        return $this;
-    }
-
-    public function getVolitional(): ?string
-    {
-        return $this->volitional;
-    }
-
-    public function setVolitional(?string $volitional): static
-    {
-        $this->volitional = $volitional;
-
-        return $this;
-    }
-
-    public function getCausative(): ?string
-    {
-        return $this->causative;
-    }
-
-    public function setCausative(?string $causative): static
-    {
-        $this->causative = $causative;
-
-        return $this;
-    }
-
-    public function getPotential(): ?string
-    {
-        return $this->potential;
-    }
-
-    public function setPotential(?string $potential): static
-    {
-        $this->potential = $potential;
-
-        return $this;
-    }
-
-    public function getTeForm(): ?string
-    {
-        return $this->teForm;
-    }
-
-    public function setTeForm(?string $teForm): static
-    {
-        $this->teForm = $teForm;
-
-        return $this;
-    }
-
-    public function getTaForm(): ?string
-    {
-        return $this->taForm;
-    }
-
-    public function setTaForm(?string $taForm): static
-    {
-        $this->taForm = $taForm;
 
         return $this;
     }
@@ -414,54 +204,6 @@ class FlashcardModification
         return $this;
     }
 
-    public function getKanji(): ?string
-    {
-        return $this->kanji;
-    }
-
-    public function setKanji(?string $kanji): static
-    {
-        $this->kanji = $kanji;
-
-        return $this;
-    }
-
-    public function getGrammarPoint(): ?string
-    {
-        return $this->grammarPoint;
-    }
-
-    public function setGrammarPoint(?string $grammarPoint): static
-    {
-        $this->grammarPoint = $grammarPoint;
-
-        return $this;
-    }
-
-    public function getGrammarRule(): ?string
-    {
-        return $this->grammarRule;
-    }
-
-    public function setGrammarRule(?string $grammarRule): static
-    {
-        $this->grammarRule = $grammarRule;
-
-        return $this;
-    }
-
-    public function getWord(): ?string
-    {
-        return $this->word;
-    }
-
-    public function setWord(?string $word): static
-    {
-        $this->word = $word;
-
-        return $this;
-    }
-
     public function getImage(): ?string
     {
         return $this->image;
@@ -482,6 +224,66 @@ class FlashcardModification
     public function setAudio(?string $audio): static
     {
         $this->audio = $audio;
+
+        return $this;
+    }
+
+    public function getFront(): ?string
+    {
+        return $this->front;
+    }
+
+    public function setFront(?string $front): static
+    {
+        $this->front = $front;
+
+        return $this;
+    }
+
+    public function getBack(): ?string
+    {
+        return $this->back;
+    }
+
+    public function setBack(?string $back): static
+    {
+        $this->back = $back;
+
+        return $this;
+    }
+
+    public function getMnemotic(): ?string
+    {
+        return $this->mnemotic;
+    }
+
+    public function setMnemotic(?string $mnemotic): static
+    {
+        $this->mnemotic = $mnemotic;
+
+        return $this;
+    }
+
+    public function getConstruction(): ?string
+    {
+        return $this->construction;
+    }
+
+    public function setConstruction(?string $construction): static
+    {
+        $this->construction = $construction;
+
+        return $this;
+    }
+
+    public function getGrammarnotes(): ?string
+    {
+        return $this->grammarnotes;
+    }
+
+    public function setGrammarnotes(?string $grammarnotes): static
+    {
+        $this->grammarnotes = $grammarnotes;
 
         return $this;
     }

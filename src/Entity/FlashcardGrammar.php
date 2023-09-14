@@ -14,38 +14,38 @@ class FlashcardGrammar extends Flashcard
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
-        maxMessage: "Le champ 'point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+        maxMessage: "Le champ 'construction du point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
     )]
-    private ?string $grammarPoint = null;
+    private ?string $construction = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
-        maxMessage: "Le champ 'règle de grammaire' ne peut pas faire plus de {{ limit }} caractères",
+        maxMessage: "Le champ 'notes' ne peut pas faire plus de {{ limit }} caractères",
     )]
-    private ?string $grammarRule = null;
+    private ?string $grammarnotes = null;
 
-    public function getGrammarPoint(): ?string
+    public function getConstruction(): ?string
     {
-        return $this->grammarPoint;
+        return $this->construction;
     }
 
-    public function setGrammarPoint(string $grammarPoint): static
+    public function setConstruction(string $construction): static
     {
-        $this->grammarPoint = $grammarPoint;
+        $this->construction = $construction;
 
         return $this;
     }
 
-    public function getGrammarRule(): ?string
+    public function getGrammarnotes(): ?string
     {
-        return $this->grammarRule;
+        return $this->grammarnotes;
     }
 
-    public function setGrammarRule(string $grammarRule): static
+    public function setGrammarnotes(?string $grammarnotes): static
     {
-        $this->grammarRule = $grammarRule;
+        $this->grammarnotes = $grammarnotes;
 
         return $this;
     }

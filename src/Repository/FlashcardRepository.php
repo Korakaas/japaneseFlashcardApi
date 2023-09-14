@@ -45,7 +45,7 @@ class FlashcardRepository extends ServiceEntityRepository
     public function paginationquery(int $deckId, int $userId): Query
     {
         return $this->createQueryBuilder('f')
-            ->select('f.id', 'f.translation')
+            ->select('f.id', 'f.front')
             ->join('f.decks', 'd')
             ->join('f.user', 'u')
             ->andWhere('d.id = :deckId')
@@ -63,7 +63,7 @@ class FlashcardRepository extends ServiceEntityRepository
     public function findOneByDeck(): ?array
     {
         return $this->createQueryBuilder('f')
-            ->select('f.translation', 'f.furigana', 'f.example', ' f.createdAt', 'f.updatedAt')
+            ->select('f.front', 'f.furigana', 'f.example', ' f.createdAt', 'f.updatedAt')
             ->join('f.decks', 'd')
             ->getQuery()
             ->setMaxResults(1)

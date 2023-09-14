@@ -269,35 +269,47 @@ class FlashcardController extends AbstractController
         //Vérifie que le paquet appartient bien à l'utilisateur
         $this->accessService->checkDeckAccess($deck, $user);
         $data = json_decode($request->getContent(), true);
+        $reverse = $data['reverse'];
 
         switch ($data['type']) {
             case 'grammar':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardGrammar::class, 'json');
+
                 break;
             case 'kanji':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardKanji::class, 'json');
                 break;
-            case 'conjugation':
-                $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardConjugation::class, 'json');
-                break;
+            // case 'conjugation':
+            //     $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardConjugation::class, 'json');
+            //     break;
             case 'vocabulary':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardVocabulary::class, 'json');
                 break;
             default:
                 throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requête invalide');
         }
+        if($reverse)
+        {
+            $flashcardBack = clone($flashcard);
+            $flashcardBack->setFront($flashcard->getBack());
+            $flashcardBack->setBack($flashcard->getFront());
 
+        }
         $flashcard->addDeck($deck);
         $flashcard->addUser($user);
+        $flashcardBack->addDeck($deck);
+        $flashcardBack->addUser($user);
+
+
 
         //Vérifie que les données sont valides
         $this->flashcardService->validateFlashcard($flashcard);
 
         $this->em->persist($flashcard);
+        $this->em->persist($flashcardBack);
         $this->em->flush();
-        $flashcardArray = $flashcard->toArray();
 
-        return new JsonResponse($flashcardArray, Response::HTTP_CREATED);
+        return new JsonResponse('La carte a bien été ajoutée', Response::HTTP_CREATED);
 
     }
 

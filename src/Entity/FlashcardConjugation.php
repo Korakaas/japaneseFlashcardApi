@@ -10,203 +10,218 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FlashcardConjugationRepository::class)]
 class FlashcardConjugation extends Flashcard
 {
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $polite = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme polie' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $polite = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme negative' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $negative = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme negative' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $negative = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme conditionnelle en Ba' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $conditionnalBa = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme conditionnelle en Ba' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $conditionnalBa = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme contionnelle en Tara' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $conditionalTara = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme contionnelle en Tara' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $conditionnalTara = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme imperative' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $imperative = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme imperative' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $imperative = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme volitive' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $volitionnal = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme volitive' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $volitional = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme causatif' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $causative = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme causatif' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $causative = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme potentiel' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $potential = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme potentiel' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $potential = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme en te' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $teForm = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme en te' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $teForm = null;
 
-    #[ORM\Column(length: 30, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
-    #[Assert\Length(
-        max: 30,
-        maxMessage: "Le champ 'forme en ta' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $taForm = null;
+    // #[ORM\Column(length: 30, nullable: true)]
+    // #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    // #[Assert\Length(
+    //     max: 30,
+    //     maxMessage: "Le champ 'forme en ta' ne peut pas faire plus de {{ limit }} caractères",
+    // )]
+    // private ?string $taForm = null;
 
-    public function getPolite(): ?string
-    {
-        return $this->polite;
-    }
+    // #[ORM\Column(length: 30)]
+    // private ?string $dictionnary = null;
 
-    public function setPolite(string $polite): static
-    {
-        $this->polite = $polite;
+    // public function getPolite(): ?string
+    // {
+    //     return $this->polite;
+    // }
 
-        return $this;
-    }
+    // public function setPolite(string $polite): static
+    // {
+    //     $this->polite = $polite;
 
-    public function getNegative(): ?string
-    {
-        return $this->negative;
-    }
+    //     return $this;
+    // }
 
-    public function setNegative(string $negative): static
-    {
-        $this->negative = $negative;
+    // public function getNegative(): ?string
+    // {
+    //     return $this->negative;
+    // }
 
-        return $this;
-    }
+    // public function setNegative(string $negative): static
+    // {
+    //     $this->negative = $negative;
 
-    public function getConditionnalBa(): ?string
-    {
-        return $this->conditionnalBa;
-    }
+    //     return $this;
+    // }
 
-    public function setConditionnalBa(string $conditionnalBa): static
-    {
-        $this->conditionnalBa = $conditionnalBa;
+    // public function getConditionnalBa(): ?string
+    // {
+    //     return $this->conditionnalBa;
+    // }
 
-        return $this;
-    }
+    // public function setConditionnalBa(string $conditionnalBa): static
+    // {
+    //     $this->conditionnalBa = $conditionnalBa;
 
-    public function getConditionalTara(): ?string
-    {
-        return $this->conditionalTara;
-    }
+    //     return $this;
+    // }
 
-    public function setConditionalTara(string $conditionalTara): static
-    {
-        $this->conditionalTara = $conditionalTara;
+    // public function getConditionnalTara(): ?string
+    // {
+    //     return $this->conditionnalTara;
+    // }
 
-        return $this;
-    }
+    // public function setConditionnalTara(string $conditionnalTara): static
+    // {
+    //     $this->conditionnalTara = $conditionnalTara;
 
-    public function getImperative(): ?string
-    {
-        return $this->imperative;
-    }
+    //     return $this;
+    // }
 
-    public function setImperative(string $imperative): static
-    {
-        $this->imperative = $imperative;
+    // public function getImperative(): ?string
+    // {
+    //     return $this->imperative;
+    // }
 
-        return $this;
-    }
+    // public function setImperative(string $imperative): static
+    // {
+    //     $this->imperative = $imperative;
 
-    public function getVolitionnal(): ?string
-    {
-        return $this->volitionnal;
-    }
+    //     return $this;
+    // }
 
-    public function setVolitionnal(string $volitionnal): static
-    {
-        $this->volitionnal = $volitionnal;
+    // public function getVolitional(): ?string
+    // {
+    //     return $this->volitional;
+    // }
 
-        return $this;
-    }
+    // public function setVolitional(string $volitional): static
+    // {
+    //     $this->volitional = $volitional;
 
-    public function getCausative(): ?string
-    {
-        return $this->causative;
-    }
+    //     return $this;
+    // }
 
-    public function setCausative(string $causative): static
-    {
-        $this->causative = $causative;
+    // public function getCausative(): ?string
+    // {
+    //     return $this->causative;
+    // }
 
-        return $this;
-    }
+    // public function setCausative(string $causative): static
+    // {
+    //     $this->causative = $causative;
 
-    public function getPotential(): ?string
-    {
-        return $this->potential;
-    }
+    //     return $this;
+    // }
 
-    public function setPotential(string $potential): static
-    {
-        $this->potential = $potential;
+    // public function getPotential(): ?string
+    // {
+    //     return $this->potential;
+    // }
 
-        return $this;
-    }
+    // public function setPotential(string $potential): static
+    // {
+    //     $this->potential = $potential;
 
-    public function getTeForm(): ?string
-    {
-        return $this->teForm;
-    }
+    //     return $this;
+    // }
 
-    public function setTeForm(string $teForm): static
-    {
-        $this->teForm = $teForm;
+    // public function getTeForm(): ?string
+    // {
+    //     return $this->teForm;
+    // }
 
-        return $this;
-    }
+    // public function setTeForm(string $teForm): static
+    // {
+    //     $this->teForm = $teForm;
 
-    public function getTaForm(): ?string
-    {
-        return $this->taForm;
-    }
+    //     return $this;
+    // }
 
-    public function setTaForm(string $taForm): static
-    {
-        $this->taForm = $taForm;
+    // public function getTaForm(): ?string
+    // {
+    //     return $this->taForm;
+    // }
 
-        return $this;
-    }
+    // public function setTaForm(string $taForm): static
+    // {
+    //     $this->taForm = $taForm;
+
+    //     return $this;
+    // }
+
+    // public function getDictionnary(): ?string
+    // {
+    //     return $this->dictionnary;
+    // }
+
+    // public function setDictionnary(string $dictionnary): static
+    // {
+    //     $this->dictionnary = $dictionnary;
+
+    //     return $this;
+    // }
 }

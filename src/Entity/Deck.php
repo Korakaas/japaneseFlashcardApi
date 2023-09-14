@@ -39,10 +39,6 @@ class Deck
     #[Groups(["getDetailDeck", 'deck_update'])]
     private ?bool $public = false;
 
-    #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck", 'deck_update'])]
-    private ?bool $reverse = false;
-
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     #[Groups(["getDetailDeck", 'deck_update'])]
     #[Assert\Length(
@@ -113,18 +109,6 @@ class Deck
     public function setPublic(?bool $public): static
     {
         $this->public = $public;
-
-        return $this;
-    }
-
-    public function isReverse(): ?bool
-    {
-        return $this->reverse;
-    }
-
-    public function setReverse(?bool $reverse): static
-    {
-        $this->reverse = $reverse;
 
         return $this;
     }
@@ -232,7 +216,6 @@ class Deck
             'name' => $this->name,
             'description' => $this->description,
             'public' => $this->public,
-            'reverse' => $this->reverse,
             'createdAt' => $this->createdAt,
             'updatedAt' => $this->updatedAt,
             'user' => $this->user->toArray()
