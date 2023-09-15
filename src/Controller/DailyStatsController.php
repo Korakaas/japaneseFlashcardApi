@@ -43,7 +43,7 @@ class DailyStatsController extends AbstractController
      * @return JsonResponse
      */
     #[Route('/user/stats', name: 'allStats', methods: ['GET'])]
-    public function getAllUserStats(): JsonResponse
+    public function getUserStats(): JsonResponse
     {
 
         /**
@@ -126,7 +126,7 @@ class DailyStatsController extends AbstractController
         $this->em->flush();
 
         return $this->json(
-            null,
+            'Statistiques misesà jour',
             Response::HTTP_OK,
             headers: ['Content-Type' => 'application/json;charset=UTF-8']
         );
