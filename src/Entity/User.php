@@ -3,15 +3,17 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use PhpParser\Node\Expr\Cast\Array_;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -20,6 +22,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Assert\NotBlank(message: "L\'email est obligatoire")]
+    #[Assert\Email(message: 'le format de l\'email est incorrecte')]
     private ?string $email = null;
 
     #[ORM\Column]
@@ -29,9 +33,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire")]
     private ?string $password = null;
 
     #[ORM\Column(length: 40)]
+    #[Assert\NotBlank(message: "Le pseudo est obligatoire")]
+    #[Assert\Length(
+        max: 40,
+        maxMessage: "Le pseudo ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    #[Assert\NoSuspiciousCharacters]
     private ?string $pseudo = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
@@ -154,9 +165,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->registeredAt;
     }
 
-    public function setRegisteredAt(\DateTimeImmutable $registeredAt): static
+    #[ORM\PrePersist]
+    public function setRegisteredAt(): self
     {
-        $this->registeredAt = $registeredAt;
+        $this->registeredAt = new DateTimeImmutable('now');
 
         return $this;
     }

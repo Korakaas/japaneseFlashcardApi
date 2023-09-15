@@ -21,7 +21,6 @@ class FlashcardModificationService
     private $serializerService;
     private $flashcardModificationRepository;
     private $em;
-    private $validator;
 
     public function __construct(
         SerializerService $serializerService,
@@ -32,7 +31,6 @@ class FlashcardModificationService
         $this->serializerService = $serializerService;
         $this->flashcardModificationRepository = $flashcardModificationRepository;
         $this->em = $em;
-        $this->validator = $validator;
     }
 
     /**
@@ -118,27 +116,6 @@ class FlashcardModificationService
         }
 
         return $flashcard;
-    }
-
-    /**
-    * Valide les données d'une carte
-    *
-    * @param Flashcard $flashcard
-    * @param ValidatorInterface $validator
-    * @throws HttpException si les données sont invalides
-    * @return void
-    */
-    public function validateFlashcardModification(FlashcardModification $flashcardModif)
-    {
-        $errors = $this->validator->validate($flashcardModif, null);
-
-        if (count($errors) > 0) {
-            $errorsMessage = [];
-            foreach ($errors as $error) {
-                $errorsMessage[] = $error->getMessage();
-            }
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsMessage));
-        }
     }
 
     private function setModifGrammar(array $data, FlashcardModification $flashcardModif)

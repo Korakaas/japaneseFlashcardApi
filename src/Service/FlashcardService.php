@@ -24,7 +24,6 @@ class FlashcardService
     private $em;
     private $flashcardModificationRepository;
     private $reviewRepository;
-    private $validator;
 
 
     public function __construct(
@@ -32,13 +31,11 @@ class FlashcardService
         EntityManagerInterface $em,
         FlashcardModificationRepository $flashcardModificationRepository,
         ReviewRepository $reviewRepository,
-        ValidatorInterface $validator
     ) {
         $this->flashcardRepository = $flashcardRepository;
         $this->em = $em;
         $this->flashcardModificationRepository = $flashcardModificationRepository;
         $this->reviewRepository = $reviewRepository;
-        $this->validator = $validator;
 
     }
 
@@ -122,27 +119,6 @@ class FlashcardService
         }
     }
 
-    /**
-     * Valide les données d'une carte
-     *
-     * @param Flashcard $flashcard
-     * @param ValidatorInterface $validator
-     * @throws HttpException si les données sont invalides
-     * @return void
-     */
-    public function validateFlashcard(Flashcard $flashcard)
-    {
-        $errors = $this->validator->validate($flashcard, null);
-
-        if (count($errors) > 0) {
-            $errorsMessage = [];
-            foreach ($errors as $error) {
-                $errorsMessage[] = $error->getMessage();
-            }
-            throw new HttpException(Response::HTTP_UNPROCESSABLE_ENTITY, json_encode($errorsMessage));
-        }
-    }
-
     public function deleteFlashcard(Flashcard $flashcardToDelete, User $user, Deck $deck)
     {
         $flashcardUsers = $flashcardToDelete->getUser();
@@ -186,7 +162,7 @@ class FlashcardService
      * @param [type] $flashcardToReturn
      * @return string
      */
-    public function getFlashcardType($flashcardToReturn):string
+    public function getFlashcardType($flashcardToReturn): string
     {
         if ($flashcardToReturn instanceof FlashcardKanji) {
             return 'kanji';

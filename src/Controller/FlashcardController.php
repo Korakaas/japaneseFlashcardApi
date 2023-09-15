@@ -2,22 +2,18 @@
 
 namespace App\Controller;
 
-use App\Entity\Deck;
 use App\Entity\Flashcard;
-use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
-use App\Entity\FlashcardModification;
 use App\Entity\FlashcardVocabulary;
 use App\Entity\User;
 use App\Repository\DeckRepository;
-use App\Repository\FlashcardModificationRepository;
 use App\Repository\FlashcardRepository;
-use App\Repository\ReviewRepository;
 use App\Service\AccessService;
 use App\Service\FlashcardModificationService;
 use App\Service\FlashcardService;
 use App\Service\SerializerService;
+use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,7 +24,6 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route("/api", "api_")]
 class FlashcardController extends AbstractController
@@ -40,6 +35,7 @@ class FlashcardController extends AbstractController
     private $flashcardService;
     private $flashcardModificationService;
     private $serializer;
+    private $validationService;
 
 
     public function __construct(
@@ -49,7 +45,8 @@ class FlashcardController extends AbstractController
         FlashcardService $flashcardService,
         FlashcardModificationService $flashcardModificationService,
         SerializerInterface $serializer,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidationService $validationService
     ) {
         $this->deckRepository = $deckRepository;
         $this->flashcardRepository = $flashcardRepository;
@@ -58,6 +55,7 @@ class FlashcardController extends AbstractController
         $this->flashcardService = $flashcardService;
         $this->flashcardModificationService = $flashcardModificationService;
         $this->serializer = $serializer;
+        $this->validationService = $validationService;
     }
 
     /**
@@ -74,7 +72,7 @@ class FlashcardController extends AbstractController
             $request->get('limit', 100),
         );
         $pagination->getTotalItemCount();
-dd($this->deckRepository->paginationquery($request->get('id')));
+        dd($this->deckRepository->paginationquery($request->get('id')));
         return $this->json(
             [
                 'flashcards' => $pagination->getItems(),
@@ -253,7 +251,6 @@ dd($this->deckRepository->paginationquery($request->get('id')));
     #[Route('/user/decks/{id}/flashcards', name: "createFlashcard", methods: ['POST'])]
     public function createFlashcard(
         Request $request,
-        UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
 
         /**
@@ -278,17 +275,16 @@ dd($this->deckRepository->paginationquery($request->get('id')));
             case 'kanji':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardKanji::class, 'json');
                 break;
-            // case 'conjugation':
-            //     $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardConjugation::class, 'json');
-            //     break;
+                // case 'conjugation':
+                //     $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardConjugation::class, 'json');
+                //     break;
             case 'vocabulary':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardVocabulary::class, 'json');
                 break;
             default:
                 throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requête invalide');
         }
-        if($reverse)
-        {
+        if($reverse) {
             $flashcardBack = clone $flashcard;
             $flashcardBack->setFront($flashcard->getBack());
             $flashcardBack->setBack($flashcard->getFront());
@@ -302,7 +298,7 @@ dd($this->deckRepository->paginationquery($request->get('id')));
 
 
         //Vérifie que les données sont valides
-        $this->flashcardService->validateFlashcard($flashcard);
+        $this->validationService->validateFlashcard($flashcard);
 
         $this->em->persist($flashcard);
         $this->em->persist($flashcardBack);
@@ -343,7 +339,7 @@ dd($this->deckRepository->paginationquery($request->get('id')));
 
         if(!$flashcardToUpdate->isDuplicate()) {
             $this->flashcardService->updateFlashcardProperties($flashcardToUpdate, $data);
-            $this->flashcardService->validateFlashcard($flashcardToUpdate);
+            $this->validationService->validateFlashcard($flashcardToUpdate);
 
         } else {
             $flashcardModification = $this->flashcardModificationService->setFlashcardModificationData(
@@ -352,7 +348,7 @@ dd($this->deckRepository->paginationquery($request->get('id')));
                 $data,
                 $user,
             );
-            $this->flashcardModificationService->validateFlashcardModification($flashcardModification);
+            $this->validationService->validateFlashcardModification($flashcardModification);
         }
 
         $this->em->flush();
@@ -407,8 +403,8 @@ dd($this->deckRepository->paginationquery($request->get('id')));
 
         $flashcardToReturn['type'] = $flashcardType;
 
-        $result =[
-            'cards'=> $flaschardToReview, 
+        $result = [
+            'cards' => $flaschardToReview,
             'totalCardCount' => $sumFlashcards];
         // dd($result);
         return new JsonResponse(

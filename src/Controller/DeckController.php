@@ -9,6 +9,7 @@ use App\Service\AccessService;
 use App\Service\DeckService;
 use App\Service\FlashcardModificationService;
 use App\Service\SerializerService;
+use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -28,6 +29,7 @@ class DeckController extends AbstractController
     private $flashcardModificationService;
     private $deckService;
     private $serializer;
+    private $validationService;
 
 
     public function __construct(
@@ -36,7 +38,8 @@ class DeckController extends AbstractController
         FlashcardModificationService $flashcardModificationService,
         DeckService $deckService,
         SerializerInterface $serializer,
-        EntityManagerInterface $em
+        EntityManagerInterface $em,
+        ValidationService $validationService
     ) {
         $this->deckRepository = $deckRepository;
         $this->em = $em;
@@ -44,6 +47,7 @@ class DeckController extends AbstractController
         $this->deckService = $deckService;
         $this->flashcardModificationService = $flashcardModificationService;
         $this->serializer = $serializer;
+        $this->validationService = $validationService;
     }
 
     /**
@@ -252,7 +256,7 @@ class DeckController extends AbstractController
         $deck->setUser($user);
 
         //validation des données
-        $this->deckService->validateDeck($deck);
+        $this->validationService->validateDeck($deck);
 
         $this->em->persist($deck);
         $this->em->flush();
@@ -304,7 +308,7 @@ class DeckController extends AbstractController
         }
 
         //validation des données
-        $this->deckService->validateDeck($deckToUpdate);
+        $this->validationService->validateDeck($deckToUpdate);
 
         $this->em->persist($deckToUpdate);
         $this->em->flush();
@@ -357,7 +361,7 @@ class DeckController extends AbstractController
         }
 
         //validation des données
-        $this->deckService->validateDeck($newDeck);
+        $this->validationService->validateDeck($newDeck);
 
         $this->em->persist($newDeck);
         $this->em->flush();
