@@ -156,11 +156,17 @@ class FlashcardModificationService
 
     private function setModifVocabulary(array $data, FlashcardModification $flashcardModif)
     {
-        if (isset($data['image'])) {
-            $flashcardModif->setImage($data['image']);
+        // if (isset($data['image'])) {
+        //     $flashcardModif->setImage($data['image']);
+        // }
+        // if (isset($data['audio'])) {
+        //     $flashcardModif->setAudio($data['audio']);
+        // }
+        if (isset($data['synonym'])) {
+            $flashcardModif->setSynonym($data['synonym']);
         }
-        if (isset($data['audio'])) {
-            $flashcardModif->setAudio($data['audio']);
+        if (isset($data['antonym'])) {
+            $flashcardModif->setAntonym($data['antonym']);
         }
     }
 

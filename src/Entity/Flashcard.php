@@ -279,8 +279,11 @@ class Flashcard
             $data['grammarNotes'] = $this->getGrammarnotes();
         }
         if ($this instanceof FlashcardVocabulary) {
-            $data['image'] = $this->getImage();
-            $data['audio'] = $this->getAudio();
+            // $data['image'] = $this->getImage();
+            // $data['audio'] = $this->getAudio();
+            $data['synonym'] = $this->getSynonym();
+            $data['antonym'] = $this->getAntonym();
+
         }
         // if ($this instanceof FlashcardConjugation) {
         //     $data['dictionnary'] = $this->getDictionnary();

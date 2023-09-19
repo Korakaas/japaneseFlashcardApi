@@ -26,6 +26,20 @@ class FlashcardVocabulary extends Flashcard
     )]
     private ?string $audio = null;
 
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'synonyme' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $synonym = null;
+
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le champ 'antonyme' ne peut pas faire plus de {{ limit }} caractères",
+    )]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $antonym = null;
+
     public function getImage(): ?string
     {
         return $this->image;
@@ -46,6 +60,30 @@ class FlashcardVocabulary extends Flashcard
     public function setAudio(?string $audio): static
     {
         $this->audio = $audio;
+
+        return $this;
+    }
+
+    public function getSynonym(): ?string
+    {
+        return $this->synonym;
+    }
+
+    public function setSynonym(?string $synonym): static
+    {
+        $this->synonym = $synonym;
+
+        return $this;
+    }
+
+    public function getAntonym(): ?string
+    {
+        return $this->antonym;
+    }
+
+    public function setAntonym(?string $antonym): static
+    {
+        $this->antonym = $antonym;
 
         return $this;
     }

@@ -264,7 +264,7 @@ class DeckController extends AbstractController
         $deckArray = $deck->toArray();
 
         return $this->json(
-            $deckArray,
+            'Le paquet a bien été crée',
             Response::HTTP_CREATED,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
