@@ -275,9 +275,6 @@ class FlashcardController extends AbstractController
             case 'kanji':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardKanji::class, 'json');
                 break;
-                // case 'conjugation':
-                //     $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardConjugation::class, 'json');
-                //     break;
             case 'vocabulary':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardVocabulary::class, 'json');
                 break;

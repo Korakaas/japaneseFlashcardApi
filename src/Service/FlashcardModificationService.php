@@ -6,7 +6,6 @@ use App\Entity\Deck;
 use App\Entity\Flashcard;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
 use App\Entity\FlashcardModification;
@@ -14,7 +13,6 @@ use App\Entity\FlashcardVocabulary;
 use App\Entity\User;
 use App\Repository\FlashcardModificationRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class FlashcardModificationService
 {
@@ -26,7 +24,6 @@ class FlashcardModificationService
         SerializerService $serializerService,
         FlashcardModificationRepository $flashcardModificationRepository,
         EntityManagerInterface $em,
-        ValidatorInterface $validator
     ) {
         $this->serializerService = $serializerService;
         $this->flashcardModificationRepository = $flashcardModificationRepository;
@@ -79,9 +76,6 @@ class FlashcardModificationService
             case $flashcard instanceof FlashcardKanji:
                 $this->setModifKanji($data, $flashcardModif);
                 break;
-                // case $flashcard instanceof FlashcardConjugation:
-                //     $this->setModifConjugation($data, $flashcardModif);
-                //     break;
             case $flashcard instanceof FlashcardVocabulary:
                 $this->setModifVocabulary($data, $flashcardModif);
                 break;
@@ -141,27 +135,9 @@ class FlashcardModificationService
         }
     }
 
-    // private function setModifConjugation(array $data, FlashcardModification $flashcardModif)
-    // {
-    //     if (isset($data['polite'])) {
-    //         $flashcardModif->setPolite($data['polite']);
-    //     }
-    //     if (isset($data['negative'])) {
-    //         $flashcardModif->setNegative($data['negative']);
-    //     }
-    //     if (isset($data['causative'])) {
-    //         $flashcardModif->setCausative($data['causative']);
-    //     }
-    // }
 
     private function setModifVocabulary(array $data, FlashcardModification $flashcardModif)
     {
-        // if (isset($data['image'])) {
-        //     $flashcardModif->setImage($data['image']);
-        // }
-        // if (isset($data['audio'])) {
-        //     $flashcardModif->setAudio($data['audio']);
-        // }
         if (isset($data['synonym'])) {
             $flashcardModif->setSynonym($data['synonym']);
         }

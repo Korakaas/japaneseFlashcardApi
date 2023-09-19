@@ -104,15 +104,9 @@ class FlashcardService
                 break;
             case $flashcardToUpdate instanceof FlashcardKanji:
                 $this->setModifKanji($data, $flashcardToUpdate);
-
-                break;
-                // case $flashcardToUpdate instanceof FlashcardConjugation:
-                //     $this->setModifConjugation($data, $flashcardToUpdate);
-
                 break;
             case $flashcardToUpdate instanceof FlashcardVocabulary:
                 $this->setModifVocabulary($data, $flashcardToUpdate);
-
                 break;
             default:
                 throw new HttpException(Response::HTTP_BAD_REQUEST, 'Requête invalide');
@@ -171,9 +165,6 @@ class FlashcardService
         } elseif ($flashcardToReturn instanceof FlashcardVocabulary) {
             return 'vocabulary';
         }
-        //  elseif ($flashcardToReturn instanceof FlashcardConjugation) {
-        //     return 'conjugation';
-        // }
 
         return 'unknown';
     }
@@ -201,27 +192,10 @@ class FlashcardService
         }
     }
 
-    // private function setModifConjugation(array $data, FlashcardConjugation $flashcard)
-    // {
-    //     if (isset($data['polite'])) {
-    //         $flashcard->setPolite($data['polite']);
-    //     }
-    //     if (isset($data['negative'])) {
-    //         $flashcard->setNegative($data['negative']);
-    //     }
-    //     if (isset($data['causative'])) {
-    //         $flashcard->setCausative($data['causative']);
-    //     }
-    // }
+
 
     private function setModifVocabulary(array $data, FlashcardVocabulary $flashcard)
     {
-        // if (isset($data['image'])) {
-        //     $flashcard->setImage($data['image']);
-        // }
-        // if (isset($data['audio'])) {
-        //     $flashcard->setAudio($data['audio']);
-        // }
         if (isset($data['synonym'])) {
             $flashcard->setSynonym($data['synonym']);
         }

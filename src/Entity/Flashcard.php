@@ -279,26 +279,9 @@ class Flashcard
             $data['grammarNotes'] = $this->getGrammarnotes();
         }
         if ($this instanceof FlashcardVocabulary) {
-            // $data['image'] = $this->getImage();
-            // $data['audio'] = $this->getAudio();
             $data['synonym'] = $this->getSynonym();
             $data['antonym'] = $this->getAntonym();
-
         }
-        // if ($this instanceof FlashcardConjugation) {
-        //     $data['dictionnary'] = $this->getDictionnary();
-        //     $data['polite'] = $this->getPolite();
-        //     $data['negative'] = $this->getNegative();
-        //     $data['conditionnalBa'] = $this->getConditionnalBa();
-        //     $data['conditionnalTara'] = $this->getConditionnalTara();
-        //     $data['imperative'] = $this->getImperative();
-        //     $data['volitional'] = $this->getVolitional();
-        //     $data['causative'] = $this->getCausative();
-        //     $data['potential'] = $this->getPotential();
-        //     $data['taForm'] = $this->getTaForm();
-        //     $data['teForm'] = $this->getTeForm();
-
-        // }
 
         return $data;
 
