@@ -58,64 +58,64 @@ class FlashcardController extends AbstractController
         $this->validationService = $validationService;
     }
 
-    /**
-     * Retourne le nom de toutes les flashcards
-     *
-     * @return JsonResponse
-     */
-    #[Route('/decks/{id}/flashcards', name: 'flashcards', methods: ['GET'])]
-    public function getFlashcardList(Request $request, PaginatorInterface $paginator): JsonResponse
-    {
-        $pagination = $paginator->paginate(
-            $this->deckRepository->paginationquery($request->get('id')),
-            $request->get('page', 1),
-            $request->get('limit', 100),
-        );
-        $pagination->getTotalItemCount();
-        dd($this->deckRepository->paginationquery($request->get('id')));
-        return $this->json(
-            [
-                'flashcards' => $pagination->getItems(),
-                'page' => $pagination->getCurrentPageNumber(),
-                'total_items' => $pagination->getTotalItemCount(),
-            ],
-            Response::HTTP_OK,
-            headers: ['Content-Type' => 'application/json;charset=UTF-8']
-        );
-    }
+    // /**
+    //  * Retourne le nom de toutes les flashcards
+    //  *
+    //  * @return JsonResponse
+    //  */
+    // #[Route('/decks/{id}/flashcards', name: 'flashcards', methods: ['GET'])]
+    // public function getFlashcardList(Request $request, PaginatorInterface $paginator): JsonResponse
+    // {
+    //     $pagination = $paginator->paginate(
+    //         $this->deckRepository->paginationquery($request->get('id')),
+    //         $request->get('page', 1),
+    //         $request->get('limit', 100),
+    //     );
+    //     $pagination->getTotalItemCount();
+    //     dd($this->deckRepository->paginationquery($request->get('id')));
+    //     return $this->json(
+    //         [
+    //             'flashcards' => $pagination->getItems(),
+    //             'page' => $pagination->getCurrentPageNumber(),
+    //             'total_items' => $pagination->getTotalItemCount(),
+    //         ],
+    //         Response::HTTP_OK,
+    //         headers: ['Content-Type' => 'application/json;charset=UTF-8']
+    //     );
+    // }
 
-    /**
-     * Retourne le détail d'une flashcard
-     *
-     * @param Request $request
-     * @param SerializerService $serializerService
-     * @return JsonResponse
-     */
-    #[Route('/decks/{deckId}/flashcards/{flashcardId}', name: 'detailFlashcard', methods: ['GET'])]
-    public function getDetailFlashcard(
-        Request $request,
-    ): JsonResponse {
+    // /**
+    //  * Retourne le détail d'une flashcard
+    //  *
+    //  * @param Request $request
+    //  * @param SerializerService $serializerService
+    //  * @return JsonResponse
+    //  */
+    // #[Route('/decks/{deckId}/flashcards/{flashcardId}', name: 'detailFlashcard', methods: ['GET'])]
+    // public function getDetailFlashcard(
+    //     Request $request,
+    // ): JsonResponse {
 
-        $flaschardId = $request->get('flashcardId');
-        $deckId = $request->get('deckId');
+    //     $flaschardId = $request->get('flashcardId');
+    //     $deckId = $request->get('deckId');
 
-        //Vérifie que la carte existe et appartient bien au paquet
-        $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
-        $flashcardToReturn = $flashcardToReturn->toArray();
-        $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
+    //     //Vérifie que la carte existe et appartient bien au paquet
+    //     $flashcardToReturn = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flaschardId);
+    //     $flashcardToReturn = $flashcardToReturn->toArray();
+    //     $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
 
-        //récupère les modifications liées au deck de la carte
-        $flashcardToReturn = $this->flashcardModificationService->getFlashcardModification(
-            $flashcardToReturn,
-            $deck
-        );
+    //     //récupère les modifications liées au deck de la carte
+    //     $flashcardToReturn = $this->flashcardModificationService->getFlashcardModification(
+    //         $flashcardToReturn,
+    //         $deck
+    //     );
 
-        return new JsonResponse(
-            $flashcardToReturn,
-            Response::HTTP_OK,
-            headers: ['Content-Type' => 'application/json;charset=UTF-8']
-        );
-    }
+    //     return new JsonResponse(
+    //         $flashcardToReturn,
+    //         Response::HTTP_OK,
+    //         headers: ['Content-Type' => 'application/json;charset=UTF-8']
+    //     );
+    // }
 
     /**
      * Retourne le nom de toutes les flashcards de l'utilisateur
@@ -136,12 +136,11 @@ class FlashcardController extends AbstractController
         $deckId = $request->get('id');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
         $this->accessService->checkDeckAccess($deck, $user);
-        // dd($deckId, $user->getId());
-
+        // dump($user, $deck);
         $pagination = $paginator->paginate(
             $this->flashcardRepository->paginationquery($deckId, $user->getId()),
             $request->get('page', 1),
-            $request->get('limit', 100),
+            $request->get('limit', 10),
         );
         $pagination->getTotalItemCount();
         return $this->json(

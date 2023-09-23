@@ -62,7 +62,7 @@ class DeckController extends AbstractController
         $pagination = $paginator->paginate(
             $this->deckRepository->paginationquery(),
             $request->get('page', 1),
-            $request->get('limit', 100),
+            $request->get('limit', 9),
         );
         $pagination->getTotalItemCount();
 
@@ -130,7 +130,7 @@ class DeckController extends AbstractController
         $user = $this->getUser();
         //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
-
+        // dump($request);
         $pagination = $paginator->paginate(
             $this->deckRepository->paginationqueryUser($user),
             $request->get('page', 1),

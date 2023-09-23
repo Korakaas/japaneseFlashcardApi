@@ -42,35 +42,21 @@ class FlashcardRepository extends ServiceEntityRepository
     //            ->getResult()
     //        ;
     //    }
+
     public function paginationquery(int $deckId, int $userId): Query
     {
         return $this->createQueryBuilder('f')
             ->select('f.id', 'f.front', 'r.intervalReview', 'r.reviewedAt', 'r.knownLevel')
             ->join('f.decks', 'd')
             ->join('f.user', 'u')
-            ->join('f.reviews', 'r')
+            // Utilisation de leftJoin pour récupérer les cartes qui n'ont pas encore de review
+            ->leftjoin('f.reviews', 'r')
             ->andWhere('d.id = :deckId')
             ->andWhere('u.id = :userId')
-            ->andWhere('r.user = :userId')
+            ->andWhere("(r.user = :userId) OR (r.user IS NULL) ")
             ->setParameter('deckId', $deckId)
             ->setParameter('userId', $userId)
             ->getQuery();
-    }
-
-    /**
-     * Undocumented function
-     *
-     * @return array|null
-     */
-    public function findOneByDeck(): ?array
-    {
-        return $this->createQueryBuilder('f')
-            ->select('f.front', 'f.furigana', 'f.example', ' f.createdAt', 'f.updatedAt')
-            ->join('f.decks', 'd')
-            ->getQuery()
-            ->setMaxResults(1)
-            ->getOneOrNullResult()
-        ;
     }
 
     /**
@@ -111,7 +97,8 @@ class FlashcardRepository extends ServiceEntityRepository
         ->select('f')
         ->innerJoin('f.decks', 'd')
         ->innerJoin('f.user', 'u')
-        ->leftJoin('f.reviews', 'r') // Utilisation d'une jointure gauche (left join) pour les avis
+        // Utilisation de leftJoin pour récupérer les cartes qui n'ont pas encore de review
+        ->leftJoin('f.reviews', 'r')
         ->where('u.id = :userId')
         ->andWhere('d.id = :deckId')
         ->andWhere("((r.reviewedAt IS NULL) OR (DATE_ADD(r.reviewedAt, r.intervalReview, 'DAY') < :todayDate))")
