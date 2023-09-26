@@ -275,8 +275,8 @@ class Flashcard
             $data['mnemotic'] = $this->getMnemonic();
         }
         if ($this instanceof FlashcardGrammar) {
-            $data['grammarConstruction'] = $this->getConstruction();
-            $data['grammarNotes'] = $this->getGrammarnotes();
+            $data['construction'] = $this->getConstruction();
+            $data['grammarnotes'] = $this->getGrammarnotes();
         }
         if ($this instanceof FlashcardVocabulary) {
             $data['synonym'] = $this->getSynonym();

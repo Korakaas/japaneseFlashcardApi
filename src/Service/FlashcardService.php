@@ -153,10 +153,10 @@ class FlashcardService
     /**
      * Détermine le type de la carte
      *
-     * @param [type] $flashcardToReturn
+     * @param Flashcard $flashcardToReturn
      * @return string
      */
-    public function getFlashcardType($flashcardToReturn): string
+    public function getFlashcardType(Flashcard $flashcardToReturn): string
     {
         if ($flashcardToReturn instanceof FlashcardKanji) {
             return 'kanji';
@@ -171,11 +171,11 @@ class FlashcardService
 
     private function setModifGrammar(array $data, FlashcardGrammar $flashcard)
     {
-        if (isset($data['grammarConstruction'])) {
-            $flashcard->setConstruction($data['grammarConstruction']);
+        if (isset($data['construction'])) {
+            $flashcard->setConstruction($data['construction']);
         }
-        if (isset($data['grammarNotes'])) {
-            $flashcard->setGrammarnotes($data['grammarNotes']);
+        if (isset($data['grammarnotes'])) {
+            $flashcard->setGrammarnotes($data['grammarnotes']);
         }
     }
 

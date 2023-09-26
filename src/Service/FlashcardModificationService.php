@@ -114,11 +114,11 @@ class FlashcardModificationService
 
     private function setModifGrammar(array $data, FlashcardModification $flashcardModif)
     {
-        if (isset($data['grammarConstruction'])) {
-            $flashcardModif->setConstruction($data['grammarConstruction']);
+        if (isset($data['construction'])) {
+            $flashcardModif->setConstruction($data['construction']);
         }
-        if (isset($data['grammarNotes'])) {
-            $flashcardModif->setGrammarnotes($data['grammarNotes']);
+        if (isset($data['grammarnotes'])) {
+            $flashcardModif->setGrammarnotes($data['grammarnotes']);
         }
     }
 

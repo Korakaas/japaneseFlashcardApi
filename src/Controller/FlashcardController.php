@@ -269,7 +269,6 @@ class FlashcardController extends AbstractController
         switch ($data['type']) {
             case 'grammar':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardGrammar::class, 'json');
-
                 break;
             case 'kanji':
                 $flashcard = $this->serializer->deserialize($request->getContent(), FlashcardKanji::class, 'json');
@@ -390,6 +389,7 @@ class FlashcardController extends AbstractController
 
         $flashcardType = $this->flashcardService->getFlashcardType($flaschardToReview);
 
+        // dump($flashcardType);
         //récupère les modifications liées au deck de la carte
         $flaschardToReview = $flaschardToReview->toArray();
         $flaschardToReview = $this->flashcardModificationService->getFlashcardModification(
@@ -397,7 +397,8 @@ class FlashcardController extends AbstractController
             $deck
         );
 
-        $flashcardToReturn['type'] = $flashcardType;
+
+        $flaschardToReview['type'] = $flashcardType;
 
         $result = [
             'cards' => $flaschardToReview,
