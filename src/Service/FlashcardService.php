@@ -20,24 +20,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FlashcardService
 {
-    private $flashcardRepository;
-    private $em;
-    private $flashcardModificationRepository;
-    private $reviewRepository;
-
-
     public function __construct(
-        FlashcardRepository $flashcardRepository,
-        EntityManagerInterface $em,
-        FlashcardModificationRepository $flashcardModificationRepository,
-        ReviewRepository $reviewRepository,
-    ) {
-        $this->flashcardRepository = $flashcardRepository;
-        $this->em = $em;
-        $this->flashcardModificationRepository = $flashcardModificationRepository;
-        $this->reviewRepository = $reviewRepository;
-
-    }
+        private FlashcardRepository $flashcardRepository,
+        private EntityManagerInterface $em,
+        private FlashcardModificationRepository $flashcardModificationRepository,
+        private ReviewRepository $reviewRepository,
+    ) {}
 
     /**
      * Retourne une carte en fonction de son Id et du deck

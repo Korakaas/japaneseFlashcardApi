@@ -13,12 +13,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ValidationService
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
+    public function __construct(private ValidatorInterface $validator) {}
 
     /**
          * Valide les données d'un paquet

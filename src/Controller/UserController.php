@@ -15,23 +15,12 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class UserController extends AbstractController
 {
-    private $serializer;
-    private $em;
-    private $validationService;
-    private $passwordHasher;
-
     public function __construct(
-        SerializerInterface $serializer,
-        EntityManagerInterface $em,
-        ValidationService $validationService,
-        UserPasswordHasherInterface $passwordHasher
-    ) {
-        $this->em = $em;
-        $this->serializer = $serializer;
-        $this->validationService = $validationService;
-        $this->passwordHasher = $passwordHasher;
-
-    }
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $em,
+        private ValidationService $validationService,
+        private UserPasswordHasherInterface $passwordHasher
+    ) {}
 
     /**
      * Permet d'enregistre un nouvel utilisateur

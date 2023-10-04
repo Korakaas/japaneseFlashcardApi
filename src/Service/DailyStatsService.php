@@ -11,16 +11,10 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class DailyStatsService
 {
-    private $em;
-    private $reviewRepository;
     private const KNOWN_LEVEL_LIMIT = 8;
     private const NEW_LEVEL_LIMIT = 3;
 
-    public function __construct(EntityManagerInterface $em, ReviewRepository $reviewRepository)
-    {
-        $this->em = $em;
-        $this->reviewRepository = $reviewRepository;
-    }
+    public function __construct(private EntityManagerInterface $em, private ReviewRepository $reviewRepository) {}
 
     /**
      * Retourne les statistiques d'un deck

@@ -19,23 +19,12 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/api", "api_")]
 class DailyStatsController extends AbstractController
 {
-    private $deckRepository;
-    private $em;
-    private $accessService;
-    private $dailyStatsService;
-
     public function __construct(
-        DeckRepository $deckRepository,
-        AccessService $accessService,
-        DailyStatsService $dailyStatsService,
-        EntityManagerInterface $em
-    ) {
-        $this->deckRepository = $deckRepository;
-        $this->em = $em;
-        $this->accessService = $accessService;
-        $this->dailyStatsService = $dailyStatsService;
-
-    }
+        private DeckRepository $deckRepository,
+        private AccessService $accessService,
+        private DailyStatsService $dailyStatsService,
+        private EntityManagerInterface $em
+    ) {}
 
     /**
      * Retourne les statistiques globales de l'utilisateur

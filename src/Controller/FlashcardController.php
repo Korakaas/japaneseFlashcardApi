@@ -28,35 +28,16 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route("/api", "api_")]
 class FlashcardController extends AbstractController
 {
-    private $deckRepository;
-    private $flashcardRepository;
-    private $em;
-    private $accessService;
-    private $flashcardService;
-    private $flashcardModificationService;
-    private $serializer;
-    private $validationService;
-
-
     public function __construct(
-        DeckRepository $deckRepository,
-        FlashcardRepository $flashcardRepository,
-        AccessService $accessService,
-        FlashcardService $flashcardService,
-        FlashcardModificationService $flashcardModificationService,
-        SerializerInterface $serializer,
-        EntityManagerInterface $em,
-        ValidationService $validationService
-    ) {
-        $this->deckRepository = $deckRepository;
-        $this->flashcardRepository = $flashcardRepository;
-        $this->em = $em;
-        $this->accessService = $accessService;
-        $this->flashcardService = $flashcardService;
-        $this->flashcardModificationService = $flashcardModificationService;
-        $this->serializer = $serializer;
-        $this->validationService = $validationService;
-    }
+        private DeckRepository $deckRepository,
+        private FlashcardRepository $flashcardRepository,
+        private AccessService $accessService,
+        private FlashcardService $flashcardService,
+        private FlashcardModificationService $flashcardModificationService,
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $em,
+        private ValidationService $validationService
+    ) {}
 
     // /**
     //  * Retourne le nom de toutes les flashcards

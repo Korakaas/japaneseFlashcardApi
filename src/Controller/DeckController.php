@@ -23,32 +23,15 @@ use Symfony\Component\Serializer\SerializerInterface;
 #[Route("/api", "api_")]
 class DeckController extends AbstractController
 {
-    private $deckRepository;
-    private $em;
-    private $accessService;
-    private $flashcardModificationService;
-    private $deckService;
-    private $serializer;
-    private $validationService;
-
-
     public function __construct(
-        DeckRepository $deckRepository,
-        AccessService $accessService,
-        FlashcardModificationService $flashcardModificationService,
-        DeckService $deckService,
-        SerializerInterface $serializer,
-        EntityManagerInterface $em,
-        ValidationService $validationService
-    ) {
-        $this->deckRepository = $deckRepository;
-        $this->em = $em;
-        $this->accessService = $accessService;
-        $this->deckService = $deckService;
-        $this->flashcardModificationService = $flashcardModificationService;
-        $this->serializer = $serializer;
-        $this->validationService = $validationService;
-    }
+        private DeckRepository $deckRepository,
+        private AccessService $accessService,
+        private FlashcardModificationService $flashcardModificationService,
+        private DeckService $deckService,
+        private SerializerInterface $serializer,
+        private EntityManagerInterface $em,
+        private ValidationService $validationService
+    ) {}
 
     /**
      * Retourne le nom de tous les decks publics
@@ -60,7 +43,7 @@ class DeckController extends AbstractController
     {
 
         $pagination = $paginator->paginate(
-            $this->deckRepository->paginationquery(),
+            $this->deckRepository->paginationqueryDeck(),
             $request->get('page', 1),
             $request->get('limit', 9),
         );
@@ -132,7 +115,7 @@ class DeckController extends AbstractController
         $this->accessService->handleNoUser($user);
         // dump($request);
         $pagination = $paginator->paginate(
-            $this->deckRepository->paginationqueryUser($user),
+            $this->deckRepository->paginationqueryDeckUser($user),
             $request->get('page', 1),
             $request->get('limit', 9),
         );

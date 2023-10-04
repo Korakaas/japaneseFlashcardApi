@@ -19,26 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route("/api", "api_")]
 class ReviewController extends AbstractController
 {
-    private $deckRepository;
-    private $reviewRepository;
-    private $accessService;
-    private $flashcardService;
-    private $reviewService;
-
-
     public function __construct(
-        DeckRepository $deckRepository,
-        ReviewRepository $reviewRepository,
-        AccessService $accessService,
-        FlashcardService $flashcardService,
-        ReviewService $reviewService,
-    ) {
-        $this->deckRepository = $deckRepository;
-        $this->reviewRepository = $reviewRepository;
-        $this->accessService = $accessService;
-        $this->reviewService = $reviewService;
-        $this->flashcardService = $flashcardService;
-    }
+        private DeckRepository $deckRepository,
+        private  ReviewRepository $reviewRepository,
+        private AccessService $accessService,
+        private FlashcardService $flashcardService,
+        private ReviewService $reviewService,
+    ) {}
 
     /**
      * Traite la révision de la carte en fonction de score de l'utilisateur

@@ -9,12 +9,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class SerializerService
 {
-    private $serializer;
-
-    public function __construct(SerializerInterface $serializer)
-    {
-        $this->serializer = $serializer;
-    }
+    public function __construct(private SerializerInterface $serializer) {}
 
     public function serializeDeck(Deck $deck, string $serializationGroups): string
     {

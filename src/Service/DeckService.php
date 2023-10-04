@@ -10,12 +10,7 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class DeckService
 {
-    private $validator;
-
-    public function __construct(ValidatorInterface $validator)
-    {
-        $this->validator = $validator;
-    }
+    public function __construct(private ValidatorInterface $validator) {}
 
     /**
     * Vérifie si le deck à dupliquer n'appartient pas déjà à l'utilisateur,

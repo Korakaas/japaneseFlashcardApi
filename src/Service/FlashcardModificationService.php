@@ -16,19 +16,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class FlashcardModificationService
 {
-    private $serializerService;
-    private $flashcardModificationRepository;
-    private $em;
-
     public function __construct(
-        SerializerService $serializerService,
-        FlashcardModificationRepository $flashcardModificationRepository,
-        EntityManagerInterface $em,
-    ) {
-        $this->serializerService = $serializerService;
-        $this->flashcardModificationRepository = $flashcardModificationRepository;
-        $this->em = $em;
-    }
+        private SerializerService $serializerService,
+        private FlashcardModificationRepository $flashcardModificationRepository,
+        private EntityManagerInterface $em,
+    ) {}
 
     /**
      * Undocumented function
