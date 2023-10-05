@@ -50,8 +50,9 @@ class DeckRepository extends ServiceEntityRepository
     public function paginationqueryDeck()
     {
         return $this->createQueryBuilder('d')
-            ->select('d.id', 'd.name')
+            ->select('d.id', 'd.name', 'u.pseudo')
             ->where('d.public = 1')
+            ->innerJoin('d.user', 'u')
             ->getQuery();
     }
 
