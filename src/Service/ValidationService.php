@@ -16,13 +16,13 @@ class ValidationService
     public function __construct(private ValidatorInterface $validator) {}
 
     /**
-         * Valide les données d'un paquet
-         *
-         * @param Deck $deck
-         * @param ValidatorInterface $validator
-         * @throws HttpException si les données sont invalides
-         * @return void
-         */
+     * Valide les données d'un paquet
+     *
+     * @param Deck $deck
+     * @param ValidatorInterface $validator
+     * @throws HttpException si les données sont invalides
+     * @return void
+     */
     public function validateDeck(Deck $deck): void
     {
         $errors = $this->validator->validate($deck, null);
@@ -62,8 +62,9 @@ class ValidationService
             );
         }
     }
+
     /**
-    * Valide les données d'une carte
+    * Valide les données des modifications de carte
     *
     * @param Flashcard $flashcard
     * @param ValidatorInterface $validator
@@ -103,7 +104,6 @@ class ValidationService
             foreach ($errors as $error) {
                 $errorsMessage[] = $error->getMessage();
             }
-            // dd($errorsMessage);
             throw new HttpException(
                 Response::HTTP_UNPROCESSABLE_ENTITY,
                 json_encode($errorsMessage, JSON_UNESCAPED_UNICODE)

@@ -18,12 +18,15 @@ class DeckService
     *
     * @param Deck $deck
     * @param User $user
-    * @throws HttpException
+    * @throws HttpException si le paquet appartient à l'utilisateur
     */
     public function checkDeckToDuplicateUser(Deck $deck, User $user): void
     {
         if ($deck->getUser() === $user) {
-            throw new HttpException(Response::HTTP_BAD_REQUEST, 'Vous ne pouvez pas dupliquez vos propres paquet');
+            throw new HttpException(
+                Response::HTTP_BAD_REQUEST,
+                'Vous ne pouvez pas dupliquez vos propres paquets'
+            );
         }
     }
 }

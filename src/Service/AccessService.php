@@ -24,16 +24,16 @@ class AccessService
     }
 
     /**
-    * Vérifie si l'utilisateur a accès au deck, sinon lance une exception HTTP.
+    * Vérifie si l'utilisateur a accès au paquet, sinon lance une exception HTTP.
     *
     * @param Deck $deck
     * @param User $user
-    * @throws HttpException
+    * @throws HttpException si le paquet n'appartient pas à l'utilisateur
     */
     public function checkDeckAccess(Deck $deck, User $user): void
     {
         if ($deck->getUser() !== $user) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
+            throw new HttpException(Response::HTTP_FORBIDDEN, 'L\'utilisateur n\'a pas accès au deck');
         }
     }
 
@@ -41,12 +41,12 @@ class AccessService
     * Vérifie que le paquet est bien public.
     *
     * @param Deck $deck
-    * @throws HttpException
+    * @throws HttpException si le paquet est privé
     */
     public function checkDeckPublic(Deck $deck): void
     {
         if (!$deck->isPublic()) {
-            throw new HttpException(Response::HTTP_UNAUTHORIZED, 'L\'utilisateur n\'a pas accès au deck');
+            throw new HttpException(Response::HTTP_FORBIDDEN, 'L\'utilisateur n\'a pas accès au deck');
         }
     }
 }

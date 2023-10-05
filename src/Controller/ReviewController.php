@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Flashcard;
 use App\Entity\User;
 use App\Repository\DeckRepository;
 use App\Repository\ReviewRepository;
@@ -56,9 +55,7 @@ class ReviewController extends AbstractController
         $flashcardId = $request->get('flashcardId');
         $flashcardReviewed = $this->flashcardService->findFlashcardByIdAndDeck($deckId, $flashcardId);
 
-
-
-        //Traitement du score et ajsutement de la prochaine révision en fonction
+        //Traitement du score et ajustement de l'interval entre les révisions
         $score = $request->toArray()['score'] ?? null;
         $review = $this->reviewRepository->findOneBy(['user' => $user->getId(), 'flashcard' => $flashcardId]);
         $this->reviewService->updateReview($score, $flashcardReviewed, $review, $user);

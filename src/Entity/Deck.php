@@ -21,6 +21,7 @@ class Deck
     #[Groups(["getDetailDeck"])]
     private ?int $id = null;
 
+    /** L'utilisateur à qui appartient le paquet */
     #[ORM\ManyToOne(inversedBy: 'decks')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank(message: "Utilisateur obligatoire")]
@@ -35,6 +36,7 @@ class Deck
     #[Groups(["getDetailDeck", 'deck_update'])]
     private ?string $name = null;
 
+    /**Si le deck sera visible par les autres utilisateurs ou non */
     #[ORM\Column(nullable: true)]
     #[Groups(["getDetailDeck", 'deck_update'])]
     private ?bool $public = false;
@@ -51,10 +53,12 @@ class Deck
     #[Groups(["getDetailDeck"])]
     private ?\DateTimeImmutable $createdAt = null;
 
+    /** Les cartes appartenant au paquet */
     #[ORM\ManyToMany(targetEntity: Flashcard::class, mappedBy: 'decks')]
     #[Groups(["getDetailDeck"])]
     private Collection $flashcards;
 
+    /** Les stats su paquet */
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: DailyStats::class, orphanRemoval: true)]
     private Collection $dailyStats;
 
@@ -62,6 +66,7 @@ class Deck
     #[Groups(["getDetailDeck"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /** Les modifications des cartes spécifiques au paquet */
     #[ORM\OneToMany(mappedBy: 'deck', targetEntity: FlashcardModification::class, orphanRemoval: true)]
     private Collection $flashcardModifications;
 

@@ -43,7 +43,14 @@ class FlashcardRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function paginationquery(int $deckId, int $userId): Query
+    /**
+     * Récupère les cartes et les données de révision en fonction du paquet et de l'user
+     *
+     * @param integer $deckId
+     * @param integer $userId
+     * @return Query
+     */
+    public function paginationqueryFlashcard(int $deckId, int $userId): Query
     {
         return $this->createQueryBuilder('f')
             ->select('f.id', 'f.front', 'r.intervalReview', 'r.reviewedAt', 'r.knownLevel')
@@ -79,7 +86,7 @@ class FlashcardRepository extends ServiceEntityRepository
     }
 
     /**
-     * Retourne 20 cartes à réviser
+     * Retourne les cartes à réviser
      * Les cartes sont séléctionnées en fonction de l'utilisateur,
      * du deck auxquelle apparitent la carte
      * et dont la date de révsion date de plus longtemps que l'interval enregistré
@@ -90,7 +97,7 @@ class FlashcardRepository extends ServiceEntityRepository
      * @param int $limit Le nombre de carte max à retourner
      * @return array|null
      */
-    public function findByToReview(int $deckId, int $userId, DateTime $todayDate, $limit = 20): ?array
+    public function findByToReview(int $deckId, int $userId, DateTime $todayDate): ?array
     {
         $qb = $this->createQueryBuilder('f');
         $cards = $qb
@@ -103,7 +110,6 @@ class FlashcardRepository extends ServiceEntityRepository
         ->andWhere('d.id = :deckId')
         ->andWhere("((r.reviewedAt IS NULL) OR (DATE_ADD(r.reviewedAt, r.intervalReview, 'DAY') < :todayDate))")
         ->andWhere("(r.user = :userId) OR (r.user IS NULL) ")
-        ->setMaxResults($limit)
         ->setParameter('deckId', $deckId)
         ->setParameter('userId', $userId)
         ->setParameter('todayDate', $todayDate)

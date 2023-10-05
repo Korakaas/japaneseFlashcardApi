@@ -15,12 +15,15 @@ class FlashcardModification
     #[ORM\Column]
     private ?int $id = null;
 
+    /** L'utilisateur à qui apprtient les modif */
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
     private ?User $user = null;
 
+    /** la carte à qui appartient les modif */
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
     private ?Flashcard $flashcard = null;
 
+    /** Le paquet auquel apprtient la carte à qui apprtient les modif */
     #[ORM\ManyToOne(inversedBy: 'flashcardModifications')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Deck $deck = null;

@@ -34,7 +34,6 @@ class DailyStatsController extends AbstractController
     #[Route('/user/stats', name: 'allStats', methods: ['GET'])]
     public function getUserStats(): JsonResponse
     {
-
         /**
          * @var User
          */

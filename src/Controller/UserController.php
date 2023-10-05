@@ -35,7 +35,6 @@ class UserController extends AbstractController
         Request $request,
     ): JsonResponse {
 
-
         $user = $this->serializer->deserialize($request->getContent(), User::class, 'json');
 
         //validation des données
@@ -55,6 +54,5 @@ class UserController extends AbstractController
             Response::HTTP_CREATED,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
-
     }
 }

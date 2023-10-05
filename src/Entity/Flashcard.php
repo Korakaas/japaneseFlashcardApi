@@ -49,15 +49,19 @@ class Flashcard
     )]
     private ?string $example = null;
 
+    /**Si la carte a été copiée par d'autres utilisateurs */
     #[ORM\Column(nullable: true)]
     private ?bool $duplicate = false;
 
+    /**Le paquet auquel la carte appartient */
     #[ORM\ManyToMany(targetEntity: Deck::class, inversedBy: 'flashcards')]
     private Collection $decks;
 
+    /**Les données de révision de la carte */
     #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: Review::class, orphanRemoval: true)]
     private Collection $reviews;
 
+    /**Les modifications faites à la carte en cas de dulication */
     #[ORM\OneToMany(mappedBy: 'flashcard', targetEntity: FlashcardModification::class, orphanRemoval: true)]
     #[Groups(["getDetailFlashcard"])]
     private Collection $flashcardModifications;
@@ -66,15 +70,15 @@ class Flashcard
     #[Groups(["getDetailDeck", "getDetailFlashcard"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
+    /**L'utilisateur qui a créée la carte */
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'flashcards')]
     private Collection $user;
 
+    /**Coté de la carte, front ou back */
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $side = null;
 
-    #[ORM\OneToOne(inversedBy: 'flashcard', targetEntity: self::class, cascade: ['persist', 'remove'])]
-    private ?self $flashcard = null;
-
+    /**La carte sera crée dans les 2 sens ? */
     #[ORM\Column(nullable: true)]
     private ?bool $reverse = null;
 
@@ -319,18 +323,6 @@ class Flashcard
     public function setSide(?string $side): static
     {
         $this->side = $side;
-
-        return $this;
-    }
-
-    public function getFlashcard(): ?self
-    {
-        return $this->flashcard;
-    }
-
-    public function setFlashcard(?self $flashcard): static
-    {
-        $this->flashcard = $flashcard;
 
         return $this;
     }

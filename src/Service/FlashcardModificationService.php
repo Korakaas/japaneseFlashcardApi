@@ -23,11 +23,11 @@ class FlashcardModificationService
     ) {}
 
     /**
-     * Undocumented function
+     * Enregistre en bdd les modifications d'une carte pour un paquet et un utilisateur précis
      *
-     * @param Flashcard $flashcard
-     * @param Deck $deck
-     * @param array $data
+     * @param Flashcard $flashcard la carte à modifier
+     * @param Deck $deck le paquet de la carte
+     * @param array $data les modifications
      * @return FlashcardModification
      */
     public function setFlashcardModificationData(
@@ -36,10 +36,14 @@ class FlashcardModificationService
         array $data,
         User $user,
     ): FlashcardModification {
+
+        //on vérifie si les mofication pour cette carte et ce paquet existe déjà
         $flashcardModif = $this->flashcardModificationRepository->findOneBy(
             ['deck' => $deck->getId(), 'flashcard' => $flashcard->getId()]
         );
         $new = false;
+
+        //sinon on crée un nouvel objet modification
         if(!$flashcardModif) {
             $flashcardModif = new FlashcardModification();
             $flashcardModif->setDeck($deck);
@@ -48,6 +52,7 @@ class FlashcardModificationService
             $new = true;
         }
 
+        //On enregistre les modifcations communes à toutes les cartes
         if (isset($data['front'])) {
             $flashcardModif->setFront($data['front']);
         }
@@ -61,6 +66,7 @@ class FlashcardModificationService
             $flashcardModif->setExample($data['example']);
         }
 
+        //On enregistre les modifcations spécifiques à chaque type de cartes
         switch (true) {
             case $flashcard instanceof FlashcardGrammar:
                 $this->setModifGrammar($data, $flashcardModif);
@@ -82,11 +88,20 @@ class FlashcardModificationService
         return $flashcardModif;
     }
 
+    /**
+     * Applique les modifications d'une carte en fonction du paquet auxquelle elle appartient
+     *
+     * @param array $flashcard la carte d'origine
+     * @param Deck $deck le paquet de la carte
+     * @return array la carte modifiée
+     */
     public function getFlashcardModification(array $flashcard, Deck $deck): array
     {
+        //on vérifie si il existe des modifications pour cette carte et ce paquet
         $flashcardModif = $this->flashcardModificationRepository->findOneBy(
             ['deck' => $deck->getId(), 'flashcard' => $flashcard['id']]
         );
+        //si oui on remplace les valeurs de la carte par celle des modifications
         if($flashcardModif) {
             $flashcardModif = $this->serializerService->serializeFlashcardModification(
                 $flashcardModif,
@@ -104,6 +119,13 @@ class FlashcardModificationService
         return $flashcard;
     }
 
+    /**
+     * Enregistre en bdd les modifications des cartes de grammaire
+     *
+     * @param array $data
+     * @param FlashcardModification $flashcardModif
+     * @return void
+     */
     private function setModifGrammar(array $data, FlashcardModification $flashcardModif)
     {
         if (isset($data['construction'])) {
@@ -114,6 +136,13 @@ class FlashcardModificationService
         }
     }
 
+    /**
+     * Enregistre en bdd les modifications des cartes de kanji
+     *
+     * @param array $data
+     * @param FlashcardModification $flashcardModif
+     * @return void
+     */
     private function setModifKanji(array $data, FlashcardModification $flashcardModif)
     {
         if (isset($data['onyomi'])) {
@@ -127,7 +156,14 @@ class FlashcardModificationService
         }
     }
 
+    /**
+     * Enregistre en bdd les modifications des cartes de vocabulaire
 
+     *
+     * @param array $data
+     * @param FlashcardModification $flashcardModif
+     * @return void
+     */
     private function setModifVocabulary(array $data, FlashcardModification $flashcardModif)
     {
         if (isset($data['synonym'])) {

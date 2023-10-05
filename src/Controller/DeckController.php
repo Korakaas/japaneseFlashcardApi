@@ -34,14 +34,13 @@ class DeckController extends AbstractController
     ) {}
 
     /**
-     * Retourne le nom de tous les decks publics
+     * Retourne le nom et pseudo du créateur de tous les decks publics de manière paginé
      *
      * @return JsonResponse
      */
     #[Route('/decks', name: 'decks', methods: ['GET'])]
     public function getDeckList(Request $request, PaginatorInterface $paginator): JsonResponse
     {
-
         $pagination = $paginator->paginate(
             $this->deckRepository->paginationqueryDeck(),
             $request->get('page', 1),
@@ -99,7 +98,7 @@ class DeckController extends AbstractController
     }
 
     /**
-     * Retourne le nom de tous les decks de l'utilisateur
+     * Retourne tous les decks de l'utilisateur de manière paginée
      *
      * @throws \HttpException si l'user est inconnu
      * @return JsonResponse
@@ -113,7 +112,6 @@ class DeckController extends AbstractController
         $user = $this->getUser();
         //Vérifie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
-        // dump($request);
         $pagination = $paginator->paginate(
             $this->deckRepository->paginationqueryDeckUser($user),
             $request->get('page', 1),
@@ -133,7 +131,7 @@ class DeckController extends AbstractController
     }
 
     /**
-     * Retourne le détail d'un deck de l'utilisateur*
+     * Retourne le détail d'un deck de l'utilisateur
      *
      * @param Deck $deck
      * @param DeckService $deckService
@@ -244,8 +242,6 @@ class DeckController extends AbstractController
         $this->em->persist($deck);
         $this->em->flush();
 
-        $deckArray = $deck->toArray();
-
         return $this->json(
             'Le paquet a bien été crée',
             Response::HTTP_CREATED,
@@ -296,8 +292,6 @@ class DeckController extends AbstractController
         $this->em->persist($deckToUpdate);
         $this->em->flush();
 
-        $deckArray = $deckToUpdate->toArray();
-
         return $this->json(
             'Le paquet a bien été modifié',
             JsonResponse::HTTP_OK,
@@ -333,6 +327,8 @@ class DeckController extends AbstractController
 
         $newDeck->setName($deckToCopy->getName());
         $newDeck->setDescription($deckToCopy->getDescription());
+        //par défaut on set public à false parce que ce cn'est pas intéressant
+        //d'avoir 2 fois exactement le même paquet à proposer
         $newDeck->setPublic(false);
         $newDeck->setUser($user);
 
@@ -351,8 +347,8 @@ class DeckController extends AbstractController
 
         $deckArray = $newDeck->toArray();
 
-        return new JsonResponse(
-            $deckArray,
+        return $this->json(
+            'Le paquet a bien été rajoutée à votre compte',
             JsonResponse::HTTP_OK,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );

@@ -39,16 +39,6 @@ class AppFixtures extends Fixture
             $listUser[] = $user;
         }
 
-        // Création d'un user admin
-        $userAdmin = new User();
-        $userAdmin->setEmail("admin@jpflashcardapi.com");
-        $userAdmin->setRoles(["ROLE_ADMIN"]);
-        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, "password"));
-        $userAdmin->setPseudo('Admin');
-        $userAdmin->setRegisteredAt(new DateTimeImmutable('2023-08-15'));
-        $manager->persist($userAdmin);
-
-
         // Création des decks
         $listDeck = [];
         for ($i = 0; $i < 50; $i++) {
@@ -99,9 +89,7 @@ class AppFixtures extends Fixture
                 $flashcardKanjiBack->addUser($user);
                 $flashcardKanjiBack->addDeck($deck);
                 $flashcardKanjiBack->isDuplicate($flashcardKanji->isDuplicate());
-                $flashcardKanjiBack->setFlashcard($flashcardKanji);
                 $flashcardKanjiBack->setReverse(1);
-                $flashcardKanji->setFlashcard($flashcardKanjiBack);
                 $listflashcardKanji[] = $flashcardKanjiBack;
                 $manager->persist($flashcardKanjiBack);
             }
@@ -144,8 +132,6 @@ class AppFixtures extends Fixture
                 $flashcardGrammarBack->addDeck($deck);
                 $flashcardGrammarBack->setSide('back');
                 $flashcardGrammarBack->isDuplicate($flashcardGrammar->isDuplicate());
-                $flashcardGrammarBack->setFlashcard($flashcardGrammar);
-                $flashcardGrammar->setFlashcard($flashcardGrammarBack);
                 $flashcardGrammarBack->setReverse(1);
                 $listflashcardGrammar[] = $flashcardGrammarBack;
                 $manager->persist($flashcardGrammarBack);
@@ -189,9 +175,7 @@ class AppFixtures extends Fixture
                 $flashcardVocabularyBack->addDeck($deck);
                 $flashcardVocabularyBack->setSide('back');
                 $flashcardVocabularyBack->isDuplicate($flashcardVocabulary->isDuplicate());
-                $flashcardVocabularyBack->setFlashcard($flashcardVocabulary);
                 $flashcardVocabularyBack->setReverse(1);
-                $flashcardVocabulary->setFlashcard($flashcardVocabularyBack);
                 $listflashcardVocabulary[] = $flashcardVocabularyBack;
                 $manager->persist($flashcardVocabularyBack);
 

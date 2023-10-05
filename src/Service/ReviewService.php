@@ -126,12 +126,16 @@ class ReviewService
         }
     }
 
-
+    /**
+     * Rajoute une variation aléatoire à l'interval
+     *
+     * @param float $interval
+     * @return float
+     */
     private function setFuzz(float $interval): float
     {
         $interval = $interval * (1.0 + (mt_rand() / mt_getrandmax()) * 0.05);
         return $interval;
-
     }
 
 }

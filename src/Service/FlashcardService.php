@@ -48,30 +48,36 @@ class FlashcardService
     }
 
     /**
-     * Retourne une carte en fonction de son Id et du deck
+     * Retourne 20 cartes qui doivent être révisées
      *
      * @param int $flashcardId
      * @param int $deck
-     * @throws HttpException si la carte n'est pas trouvée
-     * @return array
+     * @throws HttpException si aucune carte n'est trouvée
+     * @return array les cartes
      */
     public function findFlashcardToreview(int $deckId, int $userId): array
     {
         $today = new DateTime(date('Y-m-d'));
         $result = $this->flashcardRepository->findByToReview($deckId, $userId, $today);
-        // dd($result);
         if (!$result['totalCardCount']) {
             throw new HttpException(
-                Response::HTTP_NOT_FOUND,
+                Response::HTTP_OK,
                 'Pas de carte à réviser aujourd\'hui'
             );
         }
         return $result;
     }
 
+    /**
+     * Met à jour une carte
+     *
+     * @param Flashcard $flashcardToUpdate
+     * @param array $data les modifications
+     * @return void
+     */
     public function updateFlashcardProperties(Flashcard $flashcardToUpdate, array $data)
     {
-        // Update common properties for all types of flashcards
+        // Enregistre les propriétés communes à toutes les cartes
         if (isset($data['front'])) {
             $flashcardToUpdate->setFront($data['front']);
         }
@@ -85,7 +91,7 @@ class FlashcardService
             $flashcardToUpdate->setExample($data['example']);
         }
 
-        // Update type-specific properties
+        // Enregistre les propriétés spécifiques à chaque carte
         switch (true) {
             case $flashcardToUpdate instanceof FlashcardGrammar:
                 $this->setModifGrammar($data, $flashcardToUpdate);
@@ -101,6 +107,14 @@ class FlashcardService
         }
     }
 
+    /**
+     * Supprime une carte
+     *
+     * @param Flashcard $flashcardToDelete
+     * @param User $user
+     * @param Deck $deck
+     * @return void
+     */
     public function deleteFlashcard(Flashcard $flashcardToDelete, User $user, Deck $deck)
     {
         $flashcardUsers = $flashcardToDelete->getUser();
@@ -142,7 +156,7 @@ class FlashcardService
      * Détermine le type de la carte
      *
      * @param Flashcard $flashcardToReturn
-     * @return string
+     * @return string le type  de la carte
      */
     public function getFlashcardType(Flashcard $flashcardToReturn): string
     {
@@ -157,6 +171,13 @@ class FlashcardService
         return 'unknown';
     }
 
+    /**
+     * Enregistre les modifications des cartes de type Grammaire
+     *
+     * @param array $data
+     * @param FlashcardGrammar $flashcard
+     * @return void
+     */
     private function setModifGrammar(array $data, FlashcardGrammar $flashcard)
     {
         if (isset($data['construction'])) {
@@ -167,6 +188,13 @@ class FlashcardService
         }
     }
 
+    /**
+     * Enregistre les modifications des cartes de type Kanji
+     *
+     * @param array $data
+     * @param FlashcardKanji $flashcard
+     * @return void
+     */
     private function setModifKanji(array $data, FlashcardKanji $flashcard)
     {
         if (isset($data['onyomi'])) {
@@ -180,8 +208,13 @@ class FlashcardService
         }
     }
 
-
-
+    /**
+     * Enregistre les modifications des cartes de type Vocabulaire
+     *
+     * @param array $data
+     * @param FlashcardVocabulary $flashcard
+     * @return void
+     */
     private function setModifVocabulary(array $data, FlashcardVocabulary $flashcard)
     {
         if (isset($data['synonym'])) {

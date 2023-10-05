@@ -14,10 +14,12 @@ class Review
     #[ORM\Column]
     private ?int $id = null;
 
+    /**La carte à qui apprtient les données de révision */
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Flashcard $flashcard = null;
 
+    /**L'utilisateur qui a révisé la carte */
     #[ORM\ManyToOne(inversedBy: 'reviews')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
@@ -25,15 +27,19 @@ class Review
     #[ORM\Column]
     private ?\DateTimeImmutable $reviewedAt = null;
 
+    /**Niveau de connaissance de la carte */
     #[ORM\Column]
     private ?int $knownLevel = null;
 
+    /**facteur de facilité */
     #[ORM\Column(type: Types::DECIMAL, precision: 4, scale: 2)]
     private ?string $easeFactor = null;
 
+    /**Interval entre chaque révision */
     #[ORM\Column(type: Types::DECIMAL, precision: 5, scale: 2)]
     private ?string $intervalReview = null;
 
+    /**Score de révision compris entre 1 et 5 */
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $score = null;
 

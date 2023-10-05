@@ -14,16 +14,20 @@ class DailyStats
     #[ORM\Column]
     private ?int $id = null;
 
+    /** Le paquet pour lequel correspondent ces stats */
     #[ORM\ManyToOne(inversedBy: 'dailyStats')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Deck $deck = null;
 
+    /** La date pour laquelle correspondent ces stats  */
     #[ORM\Column]
     private ?\DateTimeImmutable $date = null;
 
+    /**Nombre de cartes révisées */
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $flashcardsReviewed = null;
 
+    /**Nombre de réponses correctes */
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $correctAnswers = null;
 

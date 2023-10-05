@@ -12,7 +12,6 @@ use App\Repository\FlashcardRepository;
 use App\Service\AccessService;
 use App\Service\FlashcardModificationService;
 use App\Service\FlashcardService;
-use App\Service\SerializerService;
 use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -99,7 +98,7 @@ class FlashcardController extends AbstractController
     // }
 
     /**
-     * Retourne le nom de toutes les flashcards de l'utilisateur
+     * Retourne le nom et les données de révision de toutes les flashcards de l'utilisateur
      *
      * @throws \HttpException si l'user est inconnu
      * @return JsonResponse
@@ -117,13 +116,14 @@ class FlashcardController extends AbstractController
         $deckId = $request->get('id');
         $deck = $this->deckRepository->findOneBy(['id' => $deckId]);
         $this->accessService->checkDeckAccess($deck, $user);
-        // dump($user, $deck);
+
         $pagination = $paginator->paginate(
-            $this->flashcardRepository->paginationquery($deckId, $user->getId()),
+            $this->flashcardRepository->paginationqueryFlashcard($deckId, $user->getId()),
             $request->get('page', 1),
             $request->get('limit', 10),
         );
         $pagination->getTotalItemCount();
+
         return $this->json(
             [
                 'flashcards' => $pagination->getItems(),
@@ -152,6 +152,7 @@ class FlashcardController extends AbstractController
          * @var User
          */
         $user = $this->getUser();
+        //vérfie que l'utilisateur existe
         $this->accessService->handleNoUser($user);
 
         $flaschardId = $request->get('flashcardId');
@@ -212,9 +213,9 @@ class FlashcardController extends AbstractController
 
         //Supprime la carte ou les modifications selon si carte est dupliquée ou non
         $this->flashcardService->deleteFlashcard($flashcardToDelete, $user, $deck);
-        return new JsonResponse(
-            null,
-            Response::HTTP_NO_CONTENT,
+        return $this->json(
+            'La carte a bien été supprimée',
+            Response::HTTP_OK,
             ['Content-Type' => 'application/json;charset=UTF-8']
         );
     }
@@ -318,6 +319,8 @@ class FlashcardController extends AbstractController
             $this->validationService->validateFlashcard($flashcardToUpdate);
 
         } else {
+            //si lacarte appartient à plusieurs utilisateurs, on ne modifie pas directement
+            //la carte mais on enregistre les modifcations à part
             $flashcardModification = $this->flashcardModificationService->setFlashcardModificationData(
                 $flashcardToUpdate,
                 $deck,
@@ -330,7 +333,6 @@ class FlashcardController extends AbstractController
         $this->em->flush();
 
         return new JsonResponse('La carte a bien été modifée', JsonResponse::HTTP_OK);
-
     }
 
 
@@ -366,25 +368,25 @@ class FlashcardController extends AbstractController
         );
         $flaschardToReviewArray = $toReview['cards'];
         $sumFlashcards = $toReview['totalCardCount'];
+
+        //on garde 1 carte au hasard
         $flaschardToReview = $flaschardToReviewArray[array_rand($flaschardToReviewArray)];
 
         $flashcardType = $this->flashcardService->getFlashcardType($flaschardToReview);
 
-        // dump($flashcardType);
         //récupère les modifications liées au deck de la carte
         $flaschardToReview = $flaschardToReview->toArray();
         $flaschardToReview = $this->flashcardModificationService->getFlashcardModification(
             $flaschardToReview,
             $deck
         );
-
-
         $flaschardToReview['type'] = $flashcardType;
 
         $result = [
             'cards' => $flaschardToReview,
-            'totalCardCount' => $sumFlashcards];
-        // dd($result);
+            'totalCardCount' => $sumFlashcards
+        ];
+
         return new JsonResponse(
             $result,
             Response::HTTP_OK,

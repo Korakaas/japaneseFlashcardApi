@@ -10,6 +10,13 @@ use Symfony\Component\HttpKernel\KernelEvents;
 
 class ExceptionSubscriber implements EventSubscriberInterface
 {
+    /**
+     * Formatte les exceptions du Kernel pour qu'elles puissent être utilisées
+     * par le front lors d'appels à l'API.
+     *
+     * @param ExceptionEvent $event
+     * @return void
+     */
     public function onKernelException(ExceptionEvent $event): void
     {
         $exception = $event->getThrowable();
@@ -31,6 +38,11 @@ class ExceptionSubscriber implements EventSubscriberInterface
         }
     }
 
+    /**
+     *  Définit les événements auxquels cette classe est abonnée.
+     *
+     * @return array Un tableau d'événements auxquels cette classe est abonnée.
+     */
     public static function getSubscribedEvents(): array
     {
         return [

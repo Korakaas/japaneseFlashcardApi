@@ -17,11 +17,11 @@ class DailyStatsService
     public function __construct(private EntityManagerInterface $em, private ReviewRepository $reviewRepository) {}
 
     /**
-     * Retourne les statistiques d'un deck
+     * Retourne les statistiques d'un paquet
      *
      * @param User $user
      * @param Deck $deck
-     * @return array
+     * @return array les statistiques du paquet
      */
     public function getDeckStats(User $user, Deck $deck): array
     {
@@ -69,7 +69,7 @@ class DailyStatsService
      * Met à jour les statistiques quotidiennes du deck
      *
      * @param DateTimeImmutable $today
-     * @param array $request
+     * @param array $request le score de révision
      * @param Deck $deck
      * @return void
      */
@@ -88,7 +88,6 @@ class DailyStatsService
         foreach ($dailyStats as $dailyStat) {
             if ($dailyStat->getDate()->format('Y-m-d') === $today->format('Y-m-d')) {
                 $dailyStat->setFlashcardsReviewed($dailyStat->getFlashcardsReviewed() + 1);
-
 
                 if ($score !== null && $score >= $min && $score <= $max && $score >= 3) {
                     $dailyStat->setCorrectAnswers($dailyStat->getCorrectAnswers() + 1);

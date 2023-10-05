@@ -47,6 +47,11 @@ class DeckRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    /**
+     * Récupère id,nom des paquets public et pseudo du créateur
+     *
+     * @return void
+     */
     public function paginationqueryDeck()
     {
         return $this->createQueryBuilder('d')
@@ -56,6 +61,12 @@ class DeckRepository extends ServiceEntityRepository
             ->getQuery();
     }
 
+    /**
+     * Récupère les paquets de l'utilisateur
+     *
+     * @param [type] $user
+     * @return void
+     */
     public function paginationqueryDeckUser($user)
     {
         return $this->createQueryBuilder('d')
