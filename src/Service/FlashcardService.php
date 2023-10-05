@@ -4,13 +4,11 @@ namespace App\Service;
 
 use App\Entity\Deck;
 use App\Entity\Flashcard;
-use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
 use App\Entity\FlashcardVocabulary;
 use App\Entity\User;
 use App\Repository\FlashcardModificationRepository;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Repository\FlashcardRepository;
 use App\Repository\ReviewRepository;
 use Symfony\Component\HttpFoundation\Response;

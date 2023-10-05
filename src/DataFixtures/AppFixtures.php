@@ -5,7 +5,6 @@ namespace App\DataFixtures;
 use App\Entity\DailyStats;
 use App\Entity\Deck;
 use App\Entity\FlashcardModification;
-use App\Entity\FlashcardConjugation;
 use App\Entity\FlashcardGrammar;
 use App\Entity\FlashcardKanji;
 use App\Entity\FlashcardVocabulary;
@@ -151,8 +150,6 @@ class AppFixtures extends Fixture
             $flashcardVocabulary->setBack("Back " . $i);
             $flashcardVocabulary->setFurigana("Furigana " . $i);
             $flashcardVocabulary->setExample("Example " . $i);
-            $flashcardVocabulary->setImage("Image " . $i);
-            $flashcardVocabulary->setAudio("Audio " . $i);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
             $deck = $flashcardVocabulary->getDecks()->toArray()[array_rand($flashcardVocabulary->getDecks()->toArray())];
@@ -169,8 +166,6 @@ class AppFixtures extends Fixture
                 $flashcardVocabularyBack->setBack($flashcardVocabulary->getBack());
                 $flashcardVocabularyBack->setFurigana("Furigana " . $i);
                 $flashcardVocabularyBack->setExample("Example " . $i);
-                $flashcardVocabularyBack->setImage("Image " . $i);
-                $flashcardVocabularyBack->setAudio("Audio " . $i);
                 $flashcardVocabularyBack->addUser($user);
                 $flashcardVocabularyBack->addDeck($deck);
                 $flashcardVocabularyBack->setSide('back');
@@ -183,68 +178,6 @@ class AppFixtures extends Fixture
             $manager->persist($flashcardVocabulary);
             $listflashcardVocabulary[] = $flashcardVocabulary;
         }
-
-        // Création des flashcardConjugation
-        // $listflashcardConjugation = [];
-        // for ($i = 0; $i < 50; $i++) {
-        //     $flashcardConjugation = new FlashcardConjugation();
-
-        //     $flashcardConjugation->setCreatedAt(new DateTimeImmutable("$year-$month-$day"));
-        //     $flashcardConjugation->setDictionnary("Dictionnary " . $i);
-        //     $flashcardConjugation->setTranslation("Translation " . $i);
-        //     $flashcardConjugation->setFurigana("Furigana " . $i);
-        //     $flashcardConjugation->setExample("Example " . $i);
-        //     $flashcardConjugation->setPolite("Polite " . $i);
-        //     $flashcardConjugation->setNegative("Negative " . $i);
-        //     $flashcardConjugation->setConditionnalBa("ConditionnalBa " . $i);
-        //     $flashcardConjugation->setConditionnalTara("ConditionnalTara " . $i);
-        //     $flashcardConjugation->setImperative("Imperative " . $i);
-        //     $flashcardConjugation->setVolitional("Volitional " . $i);
-        //     $flashcardConjugation->setCausative("Causative " . $i);
-        //     $flashcardConjugation->setPotential("Potential " . $i);
-        //     $flashcardConjugation->setTeForm("TeForm " . $i);
-        //     $flashcardConjugation->setTaForm("TaForm " . $i);
-        //     $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
-        //     $flashcardConjugation->addDeck($listDeck[array_rand($listDeck)]);
-        //     $deck = $flashcardConjugation->getDecks()->toArray()[array_rand($flashcardConjugation->getDecks()->toArray())];
-        //     $user = $deck->getUser();
-        //     $flashcardConjugation->addUser($user);
-        //     $flashcardConjugation->setDuplicate(mt_rand(0, 1));
-        //     $flashcardConjugation->setReverse(mt_rand(0, 1));
-        //     if($flashcardConjugation->isReverse()) {
-
-        //         $flashcardConjugation->setSide('front');
-        //         $flashcardConjugationBack = new FlashcardConjugation();
-        //         $flashcardConjugationBack->setCreatedAt($flashcardConjugation->getCreatedAt());
-        //         $flashcardConjugationBack->setDictionnary("Dictionnary " . $i);
-        //         $flashcardConjugationBack->setTranslation("Translation " . $i);
-        //         $flashcardConjugationBack->setFurigana("Furigana " . $i);
-        //         $flashcardConjugationBack->setExample("Example " . $i);
-        //         $flashcardConjugationBack->setPolite("Word " . $i);
-        //         $flashcardConjugationBack->setNegative("Image " . $i);
-        //         $flashcardConjugationBack->setConditionnalBa("ConditionnalBa " . $i);
-        //         $flashcardConjugationBack->setConditionnalTara("ConditionnalTara " . $i);
-        //         $flashcardConjugationBack->setImperative("Imperative " . $i);
-        //         $flashcardConjugationBack->setVolitional("Volitional " . $i);
-        //         $flashcardConjugationBack->setCausative("Causative " . $i);
-        //         $flashcardConjugationBack->setPotential("Potential " . $i);
-        //         $flashcardConjugationBack->setTeForm("TeForm " . $i);
-        //         $flashcardConjugationBack->setTaForm("TaForm " . $i);
-        //         $flashcardConjugationBack->addUser($user);
-        //         $flashcardConjugationBack->addDeck($deck);
-        //         $flashcardConjugationBack->setSide('back');
-        //         $flashcardConjugationBack->isDuplicate($flashcardConjugation->isDuplicate());
-        //         $flashcardConjugationBack->setFlashcard($flashcardConjugation);
-        //         $flashcardConjugationBack->setReverse(1);
-        //         $flashcardConjugation->setFlashcard($flashcardConjugationBack);
-        //         $listflashcardConjugation[] = $flashcardConjugationBack;
-        //         $manager->persist($flashcardConjugationBack);
-        //     }
-
-
-        //     $manager->persist($flashcardConjugation);
-        //     $listflashcardConjugation[] = $flashcardConjugation;
-        // }
 
         // Création des dailyStats
         $listdailyStats = [];
@@ -264,7 +197,6 @@ class AppFixtures extends Fixture
 
         //liste de toutes les flashcards
         $listFlascards = array_merge(
-            // $listflashcardConjugation,
             $listflashcardGrammar,
             $listflashcardVocabulary,
             $listflashcardKanji
@@ -316,22 +248,9 @@ class AppFixtures extends Fixture
                     $flashcardModif->setGrammarnotes("M GrammarNotes " . $i);
                     $flashcardModif->setConstruction("M construction " . $i);
                 }
-                // if($flashcard instanceof FlashcardConjugation) {
-                //     $flashcardModif->setPolite("M Polite " . $i);
-                //     $flashcardModif->setNegative("M Negative " . $i);
-                //     $flashcardModif->setConditionnalBa("M ConditionnalBa " . $i);
-                //     $flashcardModif->setConditionnalTara("M ConditionnalTara " . $i);
-                //     $flashcardModif->setImperative("M Imperative " . $i);
-                //     $flashcardModif->setVolitional("M Volitional " . $i);
-                //     $flashcardModif->setCausative("M Causative " . $i);
-                //     $flashcardModif->setPotential("M Potential " . $i);
-                //     $flashcardModif->setTaForm("M TaForm " . $i);
-                //     $flashcardModif->setTeForm("M TeForm " . $i);
-                // }
                 if($flashcard instanceof FlashcardVocabulary) {
-                    $flashcardModif->setAudio("M Audio " . $i);
-                    $flashcardModif->setImage("M Image " . $i);
-
+                    $flashcardModif->setAntonym("M Antonym " . $i);
+                    $flashcardModif->setSynonym("M Synonym " . $i);
                 }
                 $deck = $flashcard->getDecks()->toArray()[array_rand($flashcard->getDecks()->toArray())];
                 $user = $deck->getUser();

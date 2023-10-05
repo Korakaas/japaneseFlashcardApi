@@ -19,7 +19,6 @@ use Symfony\Component\Validator\Constraints as Assert;
     'kanji' => FlashcardKanji::class,
     'grammar' => FlashcardGrammar::class,
     'vocabulary' => FlashcardVocabulary::class,
-    'conjugation' => FlashcardConjugation::class
 ])]
 class Flashcard
 {

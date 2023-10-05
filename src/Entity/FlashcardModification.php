@@ -66,22 +66,6 @@ class FlashcardModification
     #[Groups(["getFlashcardModif"])]
     #[Assert\Length(
         max: 255,
-        maxMessage: "Le champ 'image' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $image = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "Le champ 'audio' ne peut pas faire plus de {{ limit }} caractères",
-    )]
-    private ?string $audio = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getFlashcardModif"])]
-    #[Assert\Length(
-        max: 255,
         maxMessage: "Le champ 'recto' ne peut pas faire plus de {{ limit }} caractères",
     )]
     private ?string $front = null;
@@ -219,30 +203,6 @@ class FlashcardModification
     public function setKunyomi(?string $kunyomi): static
     {
         $this->kunyomi = $kunyomi;
-
-        return $this;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): static
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-    public function getAudio(): ?string
-    {
-        return $this->audio;
-    }
-
-    public function setAudio(?string $audio): static
-    {
-        $this->audio = $audio;
 
         return $this;
     }
