@@ -33,7 +33,7 @@ class FlashcardKanji extends Flashcard
         max: 60,
         maxMessage: "Le champ 'moyen mnémotechniques' ne peut pas faire plus de {{ limit }} caractères",
     )]
-    private ?string $mnemonic = null;
+    private ?string $mnemotic = null;
 
     public function getOnyomi(): ?string
     {
@@ -59,14 +59,14 @@ class FlashcardKanji extends Flashcard
         return $this;
     }
 
-    public function getMnemonic(): ?string
+    public function getmnemotic(): ?string
     {
-        return $this->mnemonic;
+        return $this->mnemotic;
     }
 
-    public function setMnemonic(?string $mnemonic): static
+    public function setMnemotic(?string $mnemotic): static
     {
-        $this->mnemonic = $mnemonic;
+        $this->mnemotic = $mnemotic;
 
         return $this;
     }

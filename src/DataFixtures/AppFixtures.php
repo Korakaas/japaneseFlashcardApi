@@ -66,7 +66,7 @@ class AppFixtures extends Fixture
             $flashcardKanji->setExample("Example " . $i);
             $flashcardKanji->setKunyomi("Kunyomi " . $i);
             $flashcardKanji->setOnyomi("Onyomi " . $i);
-            $flashcardKanji->setMnemonic("Mnemotic " . $i);
+            $flashcardKanji->setMnemotic("Mnemotic " . $i);
             $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardKanji->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardKanji->setDuplicate(mt_rand(0, 1));
@@ -84,7 +84,7 @@ class AppFixtures extends Fixture
                 $flashcardKanjiBack->setFurigana("Furigana " . $i);
                 $flashcardKanjiBack->setKunyomi("Kunyomi " . $i);
                 $flashcardKanjiBack->setOnyomi("Onyomi " . $i);
-                $flashcardKanjiBack->setMnemonic("Kanji " . $i);
+                $flashcardKanjiBack->setMnemotic("Kanji " . $i);
                 $flashcardKanjiBack->addUser($user);
                 $flashcardKanjiBack->addDeck($deck);
                 $flashcardKanjiBack->isDuplicate($flashcardKanji->isDuplicate());
@@ -150,6 +150,8 @@ class AppFixtures extends Fixture
             $flashcardVocabulary->setBack("Back " . $i);
             $flashcardVocabulary->setFurigana("Furigana " . $i);
             $flashcardVocabulary->setExample("Example " . $i);
+            $flashcardVocabulary->setSynonym("Synonym " . $i);
+            $flashcardVocabulary->setAntonym("Antonym " . $i);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
             $flashcardVocabulary->addDeck($listDeck[array_rand($listDeck)]);
             $deck = $flashcardVocabulary->getDecks()->toArray()[array_rand($flashcardVocabulary->getDecks()->toArray())];
@@ -166,6 +168,8 @@ class AppFixtures extends Fixture
                 $flashcardVocabularyBack->setBack($flashcardVocabulary->getBack());
                 $flashcardVocabularyBack->setFurigana("Furigana " . $i);
                 $flashcardVocabularyBack->setExample("Example " . $i);
+                $flashcardVocabularyBack->setSynonym("Synonym " . $i);
+                $flashcardVocabularyBack->setAntonym("Antonym " . $i);
                 $flashcardVocabularyBack->addUser($user);
                 $flashcardVocabularyBack->addDeck($deck);
                 $flashcardVocabularyBack->setSide('back');

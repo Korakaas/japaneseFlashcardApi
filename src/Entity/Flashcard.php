@@ -275,7 +275,7 @@ class Flashcard
         if ($this instanceof FlashcardKanji) {
             $data['onyomi'] = $this->getOnyomi();
             $data['kunyomi'] = $this->getKunyomi();
-            $data['mnemotic'] = $this->getMnemonic();
+            $data['mnemotic'] = $this->getmnemotic();
         }
         if ($this instanceof FlashcardGrammar) {
             $data['construction'] = $this->getConstruction();

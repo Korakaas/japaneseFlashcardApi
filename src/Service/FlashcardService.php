@@ -202,7 +202,7 @@ class FlashcardService
             $flashcard->setKunyomi($data['kunyomi']);
         }
         if (isset($data['mnemotic'])) {
-            $flashcard->setMnemonic($data['mnemotic']);
+            $flashcard->setMnemotic($data['mnemotic']);
         }
     }
 
