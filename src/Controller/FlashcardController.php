@@ -206,12 +206,14 @@ class FlashcardController extends AbstractController
             $flashcardBack = clone $flashcard;
             $flashcardBack->setFront($flashcard->getBack());
             $flashcardBack->setBack($flashcard->getFront());
-
+            $flashcardBack->addDeck($deck);
+            $flashcardBack->addUser($user);
+            $this->em->persist($flashcardBack);
+            $this->validationService->validateFlashcard($flashcardBack);
         }
         $flashcard->addDeck($deck);
         $flashcard->addUser($user);
-        $flashcardBack->addDeck($deck);
-        $flashcardBack->addUser($user);
+
 
 
 
@@ -219,7 +221,6 @@ class FlashcardController extends AbstractController
         $this->validationService->validateFlashcard($flashcard);
 
         $this->em->persist($flashcard);
-        $this->em->persist($flashcardBack);
         $this->em->flush();
 
         return new JsonResponse('La carte a bien été ajoutée', Response::HTTP_CREATED);
