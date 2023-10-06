@@ -5,9 +5,11 @@ namespace App\Controller;
 use App\Entity\Deck;
 use App\Entity\User;
 use App\Repository\DeckRepository;
+use App\Repository\FlashcardRepository;
 use App\Service\AccessService;
 use App\Service\DeckService;
 use App\Service\FlashcardModificationService;
+use App\Service\FlashcardService;
 use App\Service\SerializerService;
 use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
@@ -30,7 +32,9 @@ class DeckController extends AbstractController
         private DeckService $deckService,
         private SerializerInterface $serializer,
         private EntityManagerInterface $em,
-        private ValidationService $validationService
+        private ValidationService $validationService,
+        private FlashcardService $flashcardService,
+        private FlashcardRepository $flashcardRepository
     ) {}
 
     /**
@@ -75,6 +79,23 @@ class DeckController extends AbstractController
         //Verifie que le paquet est bien public
         $this->accessService->checkDeckPublic($deck);
 
+        //on garde la première carte du deck pour l'exemple
+        $flashcards = $deck->getFlashcards();
+        if (!$flashcards->isEmpty()) {
+            $firstFlashcard = $flashcards->first();
+            $flashcarType = $this->flashcardService->getFlashcardType($firstFlashcard, Flashcard::class, 'json');
+            $jsonCard = $serializerService->serializeFlashcard(
+                $firstFlashcard,
+                'getDetailFlashcard'
+            );
+            $flashcardArray = json_decode($jsonCard, true);
+            $flashcardArray = $this->flashcardModificationService->getFlashcardModification(
+                $flashcardArray,
+                $deck
+            );
+            $flashcardArray['type'] = $flashcarType;
+        }
+
         $jsonDeck =  $serializerService->serializeDeck(
             $deck,
             'getDetailDeck'
@@ -82,13 +103,10 @@ class DeckController extends AbstractController
 
         $deckArray = json_decode($jsonDeck, true);
 
-        //on garde uniquement la première carte du paquet avec les modfications liées au deck s'il y en a
-        $flashcardToKeep =  array_shift($deckArray['flashcards']);
-        $flashcardToKeep = $this->flashcardModificationService->getFlashcardModification(
-            $flashcardToKeep,
-            $deck
-        );
-        $deckArray['flashcards'] = [$flashcardToKeep];
+        if($flashcardArray) {
+            $deckArray['flashcards'] = $flashcardArray;
+        }
+        $deckArray['pseudo'] = $deck->getUser()->getPseudo();
 
         return $this->json(
             $deckArray,

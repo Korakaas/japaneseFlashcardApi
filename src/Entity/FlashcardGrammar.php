@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FlashcardGrammar extends Flashcard
 {
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
         maxMessage: "Le champ 'construction du point de grammaire' ne peut pas faire plus de {{ limit }} caractères",
@@ -19,7 +19,7 @@ class FlashcardGrammar extends Flashcard
     private ?string $construction = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
         maxMessage: "Le champ 'notes' ne peut pas faire plus de {{ limit }} caractères",

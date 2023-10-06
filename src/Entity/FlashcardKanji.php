@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class FlashcardKanji extends Flashcard
 {
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 60,
         maxMessage: "Le champ 'Onyomi' ne peut pas faire plus de {{ limit }} caractères",
@@ -19,7 +19,7 @@ class FlashcardKanji extends Flashcard
     private ?string $onyomi = null;
 
     #[ORM\Column(length: 60, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 60,
         maxMessage: "Le champ 'Kunyomi' ne peut pas faire plus de {{ limit }} caractères",
@@ -28,7 +28,7 @@ class FlashcardKanji extends Flashcard
 
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 60,
         maxMessage: "Le champ 'moyen mnémotechniques' ne peut pas faire plus de {{ limit }} caractères",

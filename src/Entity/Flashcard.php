@@ -25,15 +25,15 @@ class Flashcard
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
         maxMessage: "Le champ furigana ne peut pas faire plus de {{ limit }} caractères",
@@ -41,7 +41,7 @@ class Flashcard
     private ?string $furigana = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\Length(
         max: 255,
         maxMessage: "L'exemple' ne peut pas faire plus de {{ limit }} caractères",
@@ -66,7 +66,7 @@ class Flashcard
     private Collection $flashcardModifications;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**L'utilisateur qui a créée la carte */
@@ -82,7 +82,7 @@ class Flashcard
     private ?bool $reverse = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\NotBlank(message: "La recto est obligatoire")]
     #[Assert\Length(
         max: 255,
@@ -91,7 +91,7 @@ class Flashcard
     private ?string $front = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(["getDetailDeck", "getDetailFlashcard"])]
+    #[Groups(["getDetailFlashcard"])]
     #[Assert\NotBlank(message: "La verso est obligatoire")]
     #[Assert\Length(
         max: 255,
