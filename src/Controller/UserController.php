@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\SecurityService;
 use App\Service\ValidationService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,7 +20,8 @@ class UserController extends AbstractController
         private SerializerInterface $serializer,
         private EntityManagerInterface $em,
         private ValidationService $validationService,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
+        private SecurityService $securityService,
     ) {}
 
     /**
@@ -41,6 +43,8 @@ class UserController extends AbstractController
         $this->validationService->validateUser($user);
         $user->setRoles(['ROLE_USER']);
         $password = $user->getpassword();
+
+        $this->securityService->checkPasswordStrength($password);
         $encryptedPassword = $this->passwordHasher->hashPassword($user, $password);
         $user->setPassword($encryptedPassword);
 

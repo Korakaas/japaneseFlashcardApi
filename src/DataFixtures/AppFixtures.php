@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
-        // Création de users "normaux"
+        // Création de users
         $listUser = [];
         for ($i = 0; $i < 20; $i++) {
             $year = mt_rand(2000, 2023);
@@ -31,7 +31,7 @@ class AppFixtures extends Fixture
             $user = new User();
             $user->setEmail("user" . $i . "@jpflashcardapi.com");
             $user->setRoles(["ROLE_USER"]);
-            $user->setPassword($this->userPasswordHasher->hashPassword($user, "password"));
+            $user->setPassword($this->userPasswordHasher->hashPassword($user, "Password1*"));
             $user->setPseudo('User' . $i);
             $user->setRegisteredAt(new DateTimeImmutable("$year-$month-$day"));
             $manager->persist($user);
