@@ -80,7 +80,7 @@ class FlashcardService
             $flashcardToUpdate->setFront($data['front']);
         }
         if (isset($data['back'])) {
-            $flashcardToUpdate->setFront($data['back']);
+            $flashcardToUpdate->setBack($data['back']);
         }
         if (isset($data['furigana'])) {
             $flashcardToUpdate->setFurigana($data['furigana']);
