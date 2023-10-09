@@ -355,6 +355,7 @@ class DeckController extends AbstractController
         foreach($flaschards as $flaschard) {
             $newDeck->addFlashcard($flaschard);
             $flaschard->setDuplicate(true);
+            $flaschard->addUser($user);
         }
 
         //validation des données

@@ -65,9 +65,18 @@ class FlashcardController extends AbstractController
         );
         $pagination->getTotalItemCount();
 
+        $flashcards =  $pagination->getItems();
+        foreach($flashcards as $key => $flashcard) {
+            $flashcard = $this->flashcardModificationService->getFlashcardModification(
+                $flashcard,
+                $deck
+            );
+            $flashcards[$key] = $flashcard;
+        }
+
         return $this->json(
             [
-                'flashcards' => $pagination->getItems(),
+                'flashcards' => $flashcards,
                 'page' => $pagination->getCurrentPageNumber(),
                 'total_items' => $pagination->getTotalItemCount(),
             ],
@@ -208,14 +217,12 @@ class FlashcardController extends AbstractController
             $flashcardBack->setBack($flashcard->getFront());
             $flashcardBack->addDeck($deck);
             $flashcardBack->addUser($user);
-            $this->em->persist($flashcardBack);
             $this->validationService->validateFlashcard($flashcardBack);
+
+            $this->em->persist($flashcardBack);
         }
         $flashcard->addDeck($deck);
         $flashcard->addUser($user);
-
-
-
 
         //Vérifie que les données sont valides
         $this->validationService->validateFlashcard($flashcard);
