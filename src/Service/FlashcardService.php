@@ -55,7 +55,7 @@ class FlashcardService
      */
     public function findFlashcardToreview(int $deckId, int $userId): array
     {
-        $today = new DateTime(date('Y-m-d'));
+        $today = new DateTime(date('Y-m-d H:i'));
         $result = $this->flashcardRepository->findByToReview($deckId, $userId, $today);
         if (!$result['totalCardCount']) {
             throw new HttpException(
