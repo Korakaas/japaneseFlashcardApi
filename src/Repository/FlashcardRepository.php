@@ -57,10 +57,10 @@ class FlashcardRepository extends ServiceEntityRepository
             ->join('f.decks', 'd')
             ->join('f.user', 'u')
             // Utilisation de leftJoin pour récupérer les cartes qui n'ont pas encore de review
-            ->leftjoin('f.reviews', 'r')
+            ->leftJoin('f.reviews', 'r', 'WITH', 'r.user = :userId OR r.user IS NULL')
             ->andWhere('d.id = :deckId')
             ->andWhere('u.id = :userId')
-            ->andWhere("(r.user = :userId) OR (r.user IS NULL) ")
+
             ->setParameter('deckId', $deckId)
             ->setParameter('userId', $userId)
             ->getQuery();
@@ -105,11 +105,10 @@ class FlashcardRepository extends ServiceEntityRepository
         ->innerJoin('f.decks', 'd')
         ->innerJoin('f.user', 'u')
         // Utilisation de leftJoin pour récupérer les cartes qui n'ont pas encore de review
-        ->leftJoin('f.reviews', 'r')
+        ->leftJoin('f.reviews', 'r', 'WITH', 'r.user = :userId OR r.user IS NULL')
         ->where('u.id = :userId')
         ->andWhere('d.id = :deckId')
         ->andWhere("((r.reviewedAt IS NULL) OR (DATE_ADD(r.reviewedAt, r.intervalReview, 'DAY') < :todayDate))")
-        ->andWhere("(r.user = :userId) OR (r.user IS NULL) ")
         ->setParameter('deckId', $deckId)
         ->setParameter('userId', $userId)
         ->setParameter('todayDate', $todayDate)

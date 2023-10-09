@@ -1,12 +1,12 @@
 nelmio_cors:
     defaults:
-        allow_origin: ['https://localhost:4200', 'http://localhost:8000']
+        allow_origin: ['https://localhost:4200', 'https://localhost:8000']
         allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
         allow_headers: ['Content-Type', 'Authorization']
         max_age: 3600
     paths:
         '^/api/':
-            allow_origin: ['https://localhost:4200', 'http://localhost:8000']
+            allow_origin: ['https://localhost:4200', 'https://localhost:8000']
             allow_headers: ['Content-Type', 'Authorization']
             allow_methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
             max_age: 3600
