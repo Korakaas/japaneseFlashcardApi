@@ -66,7 +66,7 @@ class FlashcardController extends AbstractController
         $pagination->getTotalItemCount();
 
         $flashcards =  $pagination->getItems();
-        // dd($flashcards);
+
         foreach($flashcards as $key => $flashcard) {
             $flashcard = $this->flashcardModificationService->getFlashcardModification(
                 $flashcard,
