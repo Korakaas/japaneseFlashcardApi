@@ -60,7 +60,7 @@ class FlashcardService
         if (!$result['totalCardCount']) {
             throw new HttpException(
                 Response::HTTP_OK,
-                'Pas de carte à réviser aujourd\'hui'
+                'Pas de carte à réviser pour l\'instant'
             );
         }
         return $result;

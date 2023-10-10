@@ -218,6 +218,14 @@ class DeckController extends AbstractController
         //Vérifie que le paquet appartient bien à l'utilisateur
         $this->accessService->checkDeckAccess($deckToDelete, $user);
 
+        $flaschards = $deckToDelete->getFlashcards();
+
+        //on supprimer les flashcards associés au deck ou les flashcard modifications
+        //si les cartes appartiennent à plusieurs decks
+        foreach($flaschards as $flaschard) {
+            $this->flashcardService->deleteFlashcard($flaschard, $user, $deckToDelete);
+        }
+
         $this->em->remove($deckToDelete);
         $this->em->flush();
 
